@@ -1,0 +1,227 @@
+
+.search_button{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 2%;
+    margin: auto;
+    width: 50%;
+    min-width: 18em;
+}
+
+.search_button > h3{
+    padding: 0em;
+}
+
+.search_button > input{
+    flex-grow: 1;
+    padding: 0.5em;
+}
+
+.search_button > p{
+    border: 2px solid #34353a;
+}
+
+
+
+.user_page{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.button_area{
+    display:flex;
+    flex-direction: row;
+    align-items: stretch;
+}
+
+.button_area>button{
+    border: 1px solid #34353a;
+	padding: 0.5em;
+	width: 8em;
+	text-align: center;
+	margin: 0px;
+}
+
+.character_page{
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    font-size: clamp(8px, 1.5vw, 16px);
+}
+
+.overview{
+    padding: 1em;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 0.5em;
+}
+
+.overview > img{
+    height: 20em;
+}
+
+.stats{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.stats >h3{
+    margin: 0px;
+    padding: 0px;
+}
+.stats > p{
+    margin: 0px;
+    padding: 0px;
+}
+
+.stats> div{
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+}
+
+.stats> div > p{
+    margin: 0px;
+    padding: 0px
+}
+
+.stats> div > :first-child{
+    width: 12em;
+    text-align: left;
+}
+
+.stats > div > p:nth-child(2){
+    width: 4em;
+    text-align: right;
+}
+
+.stats > div > p:nth-child(3){
+    width: 5em;
+    text-align: right;
+}
+
+.stats> div > p:nth-child(4){
+   text-align: left;
+   color: skyblue;
+}
+
+
+.relic_grid{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 0.5em;
+}
+
+
+
+.relic_box{
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    border: 2px solid #34353a;
+    padding: 1em 0em;
+    justify-content: flex-start;
+    gap: 1.5em;
+    max-width: 24em;
+    width: 30%;
+    min-width: 20em;
+    aspect-ratio: 1/0.6;
+}
+.relic_box > div{
+    padding: 0em 0.5em ;
+}
+
+.relic_box > div:nth-child(1){
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+}
+
+.relic_box > div:nth-child(1) > div{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.relic_box > div:nth-child(1) > div:first-child > div{
+    display: flex;
+    flex-direction: row;
+    font-weight: bold;
+}
+
+
+.relic_box > div:nth-child(1) > div:first-child >p{
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
+
+.relic_box > div:nth-child(2){
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: stretch;
+
+}
+
+.relic_box > div:nth-child(2) > div{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.relic_box > div:nth-child(2)>div:first-child{
+    color: rgb(186, 137, 44);;
+    font-weight: bold;
+}
+
+.relic_box p{
+    margin: 0em;
+}
+
+.info{
+    margin: 2em 0em;
+    display: flex;
+    flex-direction: column;
+}
+
+.introduction{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1em;
+    padding: 1em;
+    text-align: left;
+}
+
+.introduction>h3{
+    padding: 0em;
+    margin: 0em;
+}
+.introduction>p{
+    padding: 0em;
+    margin: 0em;
+}
+.formula_area>div{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+    align-items: stretch;
+}
+
+.formula_entry{
+    border: 1px solid #34353a;
+    margin: 0px;
+    width: 10em;
+    text-align: center;
+}

@@ -1,0 +1,42 @@
+{
+  "name": "honkai-star-rail",
+  "version": "1.0.0",
+  "description": "The content below is an example project proposal / requirements document. Replace the text below the lines marked \"__TODO__\" with details specific to your project. Remove the \"TODO\" lines.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HarbingerZou/Honkai-Star-Rail.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HarbingerZou/Honkai-Star-Rail/issues"
+  },
+  "homepage": "https://github.com/HarbingerZou/Honkai-Star-Rail#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "fs": "^0.0.1-security",
+    "mongo-sanitize": "^1.1.0",
+    "mongoose": "^7.0.4",
+    "next": "^13.3.1",
+    "next-auth": "^4.23.1",
+    "next-session": "^4.0.5",
+    "nodemailer": "^6.9.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-helmet": "^6.1.0",
+    "react-select": "^5.7.2"
+  },
+  "devDependencies": {
+    "typescript": "5.0.4"
+  }
+}

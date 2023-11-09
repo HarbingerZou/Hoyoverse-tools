@@ -1,0 +1,27 @@
+/*.isClicked{
+	background-color: #34353a;	
+}*/
+.button{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-end;
+}
+
+.button > p:nth-child(1){
+	margin: 0px;
+	display: none;
+}
+
+.button.onHover > p:nth-child(1){
+	display: inline;
+	height: 0px;
+	padding: 0px;
+	position: relative;
+	bottom: 1.75em
+	
+}
+
+.onHover > *:nth-child(2){
+	background-color: #34353a;	
+}
