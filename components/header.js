@@ -24,7 +24,7 @@ function Header(){
       <div>
         <div>
           <Link href={"/"}>
-            <h3>Hoyoverses.com</h3>
+            <h3>Hoyoverse.gg</h3>
           </Link>
         </div>
       </div>

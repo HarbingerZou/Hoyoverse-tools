@@ -139,60 +139,60 @@ function StatsBox({character}){
             <h3> Total Score: {character.totalScore}</h3>
             <div>
                 <p> HP: </p>
-                <p> {character.combateValues.hpFinal}</p>
-                <p>{character.combateValues.hpBase} </p>
-                <p>+{character.combateValues.hpFinal - character.combateValues.hpBase}</p>
+                <p> {character.combatValues.hpFinal}</p>
+                <p>{character.combatValues.hpBase} </p>
+                <p>+{character.combatValues.hpFinal - character.combatValues.hpBase}</p>
             </div>
             <div>
                 <p> ATK: </p>
-                <p>{character.combateValues.attackFinal}</p>
-                <p>{character.combateValues.attackBase} </p>
-                <p>+{character.combateValues.attackFinal - character.combateValues.attackBase}</p>
+                <p>{character.combatValues.attackFinal}</p>
+                <p>{character.combatValues.attackBase} </p>
+                <p>+{character.combatValues.attackFinal - character.combatValues.attackBase}</p>
             </div>
             <div>
                 <p> DEF: </p>
-                <p> {character.combateValues.defenseFinal}</p>
-                <p>{character.combateValues.defenseBase} </p>
-                <p>+{character.combateValues.defenseFinal - character.combateValues.defenseBase}</p>
+                <p> {character.combatValues.defenseFinal}</p>
+                <p>{character.combatValues.defenseBase} </p>
+                <p>+{character.combatValues.defenseFinal - character.combatValues.defenseBase}</p>
             </div>
             <div>
                 <p> Speed: </p>
-                <p>{character.combateValues.speedFinal}</p>
-                <p>{character.combateValues.speedBase} </p>
-                <p>+{character.combateValues.speedFinal - character.combateValues.speedBase}</p>
+                <p>{character.combatValues.speedFinal}</p>
+                <p>{character.combatValues.speedBase} </p>
+                <p>+{character.combatValues.speedFinal - character.combatValues.speedBase}</p>
             </div>
 
             <div>
                 <p> CRIT Rate:</p>
-                <p> {character.combateValues.criticalChance}%</p>
+                <p> {character.combatValues.criticalChance}%</p>
             </div>
             <div>
                 <p> CRIT DMG: </p>
-                <p> {character.combateValues.criticalDamage}%</p>
+                <p> {character.combatValues.criticalDamage}%</p>
             </div>
             <div>
                 <p> Break Effect: </p>
-                <p>{character.combateValues.stanceBreakRatio}%</p>
+                <p>{character.combatValues.stanceBreakRatio}%</p>
             </div>
             <div>
                 <p> Effect HIT Rate: </p>
-                <p> {character.combateValues.statusProbability}%</p>
+                <p> {character.combatValues.statusProbability}%</p>
             </div>
             <div>
                 <p> Outgoing Healing Boost: </p>
-                <p> {character.combateValues.healRatio}%</p>
+                <p> {character.combatValues.healRatio}%</p>
             </div>
             <div>
                 <p> Energy Regen Rate Boost: </p>
-                <p> {character.combateValues.spRatio}%</p>
+                <p> {character.combatValues.spRatio}%</p>
             </div>
             <div>
                 <p> Effect RES: </p>
-                <p>{character.combateValues.statusResistance}%</p>
+                <p>{character.combatValues.statusResistance}%</p>
             </div>
             <div>
                 <p> {character.elementString} DMG Boost: </p>
-                <p>{character.combateValues[`${character.element}AddHurt`]}%</p>
+                <p>{character.combatValues[`${character.element}AddHurt`]}%</p>
             </div>
         </div>
     )
