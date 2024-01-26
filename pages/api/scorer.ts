@@ -6,14 +6,15 @@ import setConfig from '../../models/starRailConfig/setConfigModel';
 import getRelicScore from "../../utils/starrail/getRelicScore"
 import getWeights from '../../utils/starrail/getWeight';
 import factors from '../../utils/starrail/scoreFactor';
-import { Element, RelicType } from '../../utils/starrail/Factories/CommonInterfaces';
 
-import {getDamageInfo, CharacterInfo} from '../../utils/starrail/Factories/getDamageInfo';
+import {getDamageInfo} from '../../utils/starrail/Factories/getDamageInfo';
 
-import { Stats } from '../../utils/starrail/Factories/CommonInterfaces';
-import { rawCharacter } from '../../utils/starrail/Factories/CharacterFacory';
-import { rawWeapon } from '../../utils/starrail/Factories/WeaponFactory';
+import { Stats } from './JSONStructure';
+import { RawCharacter } from './JSONStructure';
+import { AvatarConfig, RelicConfig, SetConfig, AffixConfig, RawAffix, RawRelic, RawSkill, Factors, RawSubAffix } from './JSONStructure';
+
 import { parseType } from '../../utils/renameMethod';
+import { ForMattedAffix, FormattedRelic, UserInfo, CharacterWithStats } from './JSONStructureOwn';
 
 let cachedRelicConfig:RelicConfig|undefined = undefined;
 let cachedAffixConfig:AffixConfig|undefined = undefined;
@@ -21,103 +22,7 @@ let cachedAvatarConfig:AvatarConfig[]|undefined = undefined;
 let cachedSetConfig:SetConfig|undefined = undefined;
 
 
-interface AvatarConfig{
-    id:number,
-    name:string,
-    element:Element;
-}
-
-//represent the AffixConfig Object in database
-interface AffixConfig{
-    [key:string]:string
-}
-
-//same
-interface RelicConfig{
-    [key:string]:RelicConfigInstance
-}
-interface RelicConfigInstance{
-    ID:number,
-    SetID:number,
-    Rarity:string,
-    Type:RelicType
-}
-
-//same
-interface SetConfig{
-    [key:string]:string
-}
-
-interface RawAffix{
-    id:number,
-    type:number,
-    value:number
-}
-interface RawSubAffix{
-    info:RawAffix,
-    count:number,
-    step:number,
-}
-interface Affix{
-    type:string,
-    value:number,
-    valueString:string
-}
-
-interface Relic{
-    id:number;
-    level:number;
-    mainAffix:any;
-    subAffixList:any[];
-}
-
-class FormattedRelic{
-    level:number;
-    type:string;
-    setID:number
-    set:string;
-    rarity:number;
-    score:number|undefined;
-    rate:string|undefined;
-    mainAffix:Affix;
-    subAffix:Affix[];
-    constructor(level:number, type:string, setID:number,  set:string, rarity:number, mainAffix:Affix){
-        this.level = level;
-        this.type = type;
-        this.set = set;
-        this.setID = setID;
-        this.rarity = rarity;
-        this.score = undefined;
-        this.rate = undefined;
-        this.mainAffix = mainAffix;
-        this.subAffix = [];
-    }
-}
-
-interface Factors {
-    HP: number;
-    ATK: number;
-    DEF: number;
-    "HP%": number;
-    "ATK%": number;
-    "DEF%": number;
-    "CRIT Rate": number;
-    "CRIT DMG": number; 
-    "Effect HIT Rate": number; 
-    "Effect RES": number; 
-    "Break Effect": number; 
-    Speed: number; 
-}
-
-interface UserInfo{
-    uid:number,
-    name:string,
-    level:number,
-    avatars:CharacterWithStats[],
-    factors:Factors
-}
-
-function parseMainAffix(affix:RawAffix,affix_config:any):Affix{
+function parseMainAffix(affix:RawAffix,affix_config:any):ForMattedAffix{
     const type:string = affix_config[affix.type.toString()];
     let value:number = affix.value;
     let valueString:string;
@@ -133,7 +38,7 @@ function parseMainAffix(affix:RawAffix,affix_config:any):Affix{
     return {type,value,valueString}
 }
 
-function parseSubAffix(affix:RawSubAffix, affix_config:any):Affix{
+function parseSubAffix(affix:RawSubAffix, affix_config:any):ForMattedAffix{
     //console.log(affix)
     const type:string = affix_config[affix.info.type.toString()];
     let value:number = affix.info.value;
@@ -151,7 +56,7 @@ function parseSubAffix(affix:RawSubAffix, affix_config:any):Affix{
 
 }
 
-function parseRelic(relic:Relic,relic_config:RelicConfig,affix_config:AffixConfig,set_config:SetConfig):FormattedRelic{
+function parseRelic(relic:RawRelic,relic_config:RelicConfig,affix_config:AffixConfig,set_config:SetConfig):FormattedRelic{
     const level:number = relic.level;
     const type:string = parseType(relic_config[relic.id].Type); 
     const setId:number = relic_config[relic.id].SetID;
@@ -161,7 +66,7 @@ function parseRelic(relic:Relic,relic_config:RelicConfig,affix_config:AffixConfi
     const rarityString:string = relic_config[relic.id].Rarity.slice(-1);
     const rarity:number = parseInt(rarityString)
 
-    const mainAffix:Affix = parseMainAffix(relic.mainAffix, affix_config)
+    const mainAffix:ForMattedAffix = parseMainAffix(relic.mainAffix, affix_config)
     
     const formatted_relic:FormattedRelic = new FormattedRelic(level, type, setId, set, rarity, mainAffix)
 
@@ -175,53 +80,6 @@ function parseRelic(relic:Relic,relic_config:RelicConfig,affix_config:AffixConfi
 
 
 
-class CharacterWithStats implements rawCharacter{
-    id: number;
-    level: number;
-    basic_level: number;
-    skill_level: number;
-    ultimate_level: number;
-    talent_level: number;
-    trace1: boolean;
-    trace2: boolean;
-    trace3: boolean;
-
-    name:string;
-    element:Element;
-    combatValues:Stats
-    weapon:rawWeapon
-    relics:any[]
-    weights:Factors|undefined
-    totalScore:number
-    info:CharacterInfo|undefined
-
-    constructor (rawCharacter:rawCharacter, name:string, element:Element, combatValues:Stats, weapon:rawWeapon){
-        this.id = rawCharacter.id;
-        this.totalScore = 0;
-        this.level = rawCharacter.level;
-        this.basic_level = rawCharacter.basic_level;
-        this.skill_level = rawCharacter.skill_level;
-        this.ultimate_level= rawCharacter.ultimate_level;
-        this.talent_level = rawCharacter.talent_level;
-        this.trace1 = rawCharacter.trace1;
-        this.trace2 = rawCharacter.trace2;
-        this.trace3 = rawCharacter.trace3;
-
-        this.name = name;
-        this.element = element;
-        this.combatValues = combatValues;
-        this.weapon = weapon;
-        this.relics = [];
-        this.weights = undefined
-        this.totalScore = 0;
-        this.info = undefined;
-    }
-}
-
-interface rawSkill{
-    id:number,
-    level:number
-}
 export default async function handler(req:any, res:any) {
     const UID = req.query.uid
     const response = await fetch(`https://api.yshelper.com/ys/getHSRPlayerInfo.php?uid=${UID}`)
@@ -274,9 +132,9 @@ export default async function handler(req:any, res:any) {
             //The config of this character is not added;
             continue;
         }
-        const skillList:rawSkill[] = avatar.skillList;
+        const skillList:RawSkill[] = avatar.skillList;
 
-        const rawAvatar:rawCharacter = {
+        const rawAvatar:RawCharacter = {
             id: avatar.avatarId,
             level: avatar.level,
             basic_level: skillList[0].level,
@@ -293,12 +151,11 @@ export default async function handler(req:any, res:any) {
             new CharacterWithStats(rawAvatar, tempAvatarConfig.name, tempAvatarConfig.element, avatar.combatValues, avatar.weapon)
  
         for(const relic of avatar.relicList){
-            //console.log(relic);
             if(cachedRelicConfig == undefined || cachedAffixConfig === undefined || cachedSetConfig === undefined){
                 continue;
             }
             const formatted_relic:FormattedRelic = parseRelic(relic, cachedRelicConfig, cachedAffixConfig, cachedSetConfig);
-            //console.log(formatted_relic);
+            //console.log(formatted_relic)
 
             const {score,rate} = await getRelicScore({relic:formatted_relic, name:formattedAvatar.name});
             formatted_relic.score = score;
@@ -313,7 +170,7 @@ export default async function handler(req:any, res:any) {
         
 
         ///Damages
-        formattedAvatar.info = getDamageInfo({stats:avatar.combatValues, rawCharacter: rawAvatar, rawWeapon:formattedAvatar.weapon, rawRelicList:formattedAvatar.relics})
+        formattedAvatar.info = getDamageInfo({stats:avatar.combatValues, rawCharacter: rawAvatar, rawWeapon:formattedAvatar.weapon, relicList:formattedAvatar.relics})
         
         //format the combat value to make crit damage and rate percentage
         for(const stat in formattedAvatar.combatValues){

@@ -5,19 +5,22 @@ import { Helmet } from "react-helmet";
 import uid_search_style from "./scorer.module.css"
 import OnHoverButtonWrapper from "../components/onHoverButton";
 import LoadingPage from "../components/loadingPage"
+import { FormattedRelic, UserInfo } from "./api/JSONStructureOwn";
+import { CharacterWithStats } from "./api/JSONStructureOwn";
+import { elementMapper } from "../utils/renameMethod";
 
 export default function userInfo(){
-    const UIDInput = useRef(null);
+    const UIDInput = useRef<HTMLInputElement>(null);
     //const [UID,setUID] = useState(0);
-    const [userInfo, setUserInfo] = useState(undefined);
+    const [userInfo, setUserInfo] = useState<UserInfo|undefined>(undefined);
     const [loading,setLoading] = useState(false);
     //const {status, data} = useSession();
-    async function searchButtonClicked(evt){
+    async function searchButtonClicked(evt:React.MouseEvent){
         if(loading){
             return;
         }
-        const UID = UIDInput.current.value;
-        if (UID === ""){
+        const UID = UIDInput.current?.value;
+        if (!UID || UID === ""){
             setUserInfo(undefined)
             return;
         }
@@ -33,17 +36,18 @@ export default function userInfo(){
     }
 
     //console.log("userINfo:",userInfo);
-    let characters = 
+    let infoPanel = 
         <>
             <p style={{textAlign:"center"}}>Display the characters you want to score as Starfaring Companions in the game and enter your UID</p>
             <p style={{textAlign:"center"}}>If you just changed your characters' suits in the game, it may take roughly 3 minutes for the result to change </p>
         </>
+
     if(loading){
-        characters = <LoadingPage />
+        infoPanel = <LoadingPage />
     }else if(userInfo !== undefined && Object.keys(userInfo).length === 0){
-        characters = <p style={{textAlign:"center"}}>UID {UIDInput.current.value} is not a valid UID</p>
+        infoPanel = <p style={{textAlign:"center"}}>UID {UIDInput.current?.value} is not a valid UID</p>
     }else if(userInfo !== undefined){
-        characters = <User userInfo = {userInfo}/>
+        infoPanel = <User userInfo = {userInfo}/>
     }
 
     return (
@@ -61,13 +65,13 @@ export default function userInfo(){
                         <p onClick={searchButtonClicked}> Search </p>
                     </OnHoverButtonWrapper>
                 </div>
-                {characters}
+                {infoPanel}
             </div>
         </>
     );
 };
 
-function User({userInfo}){
+function User({userInfo}:{userInfo:UserInfo}){
     const avatars = userInfo.avatars;
     const [avatarShown,setAvatarShown] = useState(avatars[0]);
 
@@ -77,7 +81,7 @@ function User({userInfo}){
     const characters = avatarShown===undefined?
     <p>Please Add Some Characters as Your Starfaring Companions in Your trailblazer Profile</p>: 
     <>
-        <CharacterButton characters={avatars} avatarShown={avatarShown} setavAtarShown={setAvatarShown}/>
+        <CharacterButton characters={avatars} avatarShown={avatarShown} setAvatarShown={setAvatarShown}/>
 
         <SingleCharacter character={avatarShown}/>
 
@@ -95,10 +99,10 @@ function User({userInfo}){
 }
 
 
-function CharacterButton({characters, avatarShown, setavAtarShown}){
-    function mapper(character){
+function CharacterButton({characters, avatarShown, setAvatarShown}:{characters:CharacterWithStats[], avatarShown: CharacterWithStats, setAvatarShown: (newCharacter:CharacterWithStats)=> void }){
+    function mapper(character:CharacterWithStats){
         return(
-            <button key={character.name} onClick={()=>setavAtarShown(character)}>
+            <button key={character.name} onClick={()=>setAvatarShown(character)}>
                 {character.name}
             </button>
         )
@@ -112,7 +116,7 @@ function CharacterButton({characters, avatarShown, setavAtarShown}){
 }
 
 
-function SingleCharacter({character}){
+function SingleCharacter({character}:{character:CharacterWithStats}){
     //console.log(character);
 
     return(
@@ -131,7 +135,7 @@ function SingleCharacter({character}){
     )
 }
 
-function StatsBox({character}){
+function StatsBox({character}:{character:CharacterWithStats}){
     return (
         <div className={uid_search_style.stats}>
             <h3> {character.name} </h3>
@@ -191,26 +195,26 @@ function StatsBox({character}){
                 <p>{character.combatValues.statusResistance}%</p>
             </div>
             <div>
-                <p> {character.elementString} DMG Boost: </p>
+                <p> {elementMapper(character.element)} DMG Boost: </p>
                 <p>{character.combatValues[`${character.element}AddHurt`]}%</p>
             </div>
         </div>
     )
 }
-
-function DamageBox({character}){
+/*
+function DamageBox({character}:{character:CharacterWithStats}){
     return(
         <div>
            {character.basicDamage? <p>{character.basicDamage.expectDamage}</p> : <></>}
            {character.basicDamage? <p>{character.basicDamage.critDamage}</p> : <></>}
         </div>
     )
-}
+}*/
 
-function FormluaArea({character, userInfo}){
-    console.log(character);
-    const weights = Object.entries(character.weights);
-    const factors = Object.entries(userInfo.factors);
+function FormluaArea({character, userInfo}:{character:CharacterWithStats, userInfo:UserInfo}){
+    //console.log(character);
+    const weights = character.weights? Object.entries(character.weights) : [];
+    const factors = character.weights? Object.entries(userInfo.factors) : [];
     //console.log(weights);
     return(
         <div className={uid_search_style.info}>
@@ -243,13 +247,13 @@ function FormluaArea({character, userInfo}){
     )
 }
 
-function RelicBox({relic}){
+function RelicBox({relic}:{relic:FormattedRelic}){
     //console.log(relic);
     return(
         <div className={uid_search_style.relic_box}>
             <div>
                 <div>
-                    <p>{relic.set}</p>
+                    <p>{relic.setName}</p>
                     <div>
                         <p>{relic.score}</p>
                         <p>{relic.rate}</p>

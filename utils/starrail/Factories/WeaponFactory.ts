@@ -1,11 +1,6 @@
-import {Stats,addEffect, SpecialEffects, Multipliers, Path} from "./CommonInterfaces"
-interface rawWeapon{
-    id:number;
-    level:number;
-    promotion:number;
-    rankLevel: number;
-}
-
+import { addEffect, SpecialEffects, Multipliers, Path} from "./CommonInterfaces"
+import { RawWeapon } from "../../../pages/api/JSONStructure";
+import { Stats } from "../../../pages/api/JSONStructure";
 interface Weapon extends addEffect{
     name:string;
     path:Path;
@@ -38,7 +33,7 @@ class brighter_than_the_sun implements Weapon{
 }
 
 
-function getWeapon(weapon:rawWeapon):Weapon | undefined{
+function getWeapon(weapon:RawWeapon):Weapon | undefined{
     if(weapon.id == 23015){
         return new brighter_than_the_sun(weapon.level, weapon.promotion, weapon.rankLevel);
     }else{
@@ -47,4 +42,4 @@ function getWeapon(weapon:rawWeapon):Weapon | undefined{
 }
 
 export { getWeapon };
-export type { rawWeapon, Weapon };
+export type { Weapon };

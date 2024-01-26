@@ -1,12 +1,16 @@
-import {Stats,SpecialEffects} from "./CommonInterfaces"
-import {rawCharacter, Info, Character, getCharacter} from "./CharacterFacory"
-import {rawWeapon, Weapon, getWeapon } from "./WeaponFactory";
+import {SpecialEffects} from "./CommonInterfaces"
+import { Stats } from "../../../pages/api/JSONStructure";
+import { Info, Character, getCharacter} from "./CharacterFacory"
+import { Weapon, getWeapon } from "./WeaponFactory";
+import { Relic, RelicSet, getRelicSetList } from "./RelicFactory";
+
+import { RawCharacter,RawWeapon } from "../../../pages/api/JSONStructure";
 
 interface InputParams {
     stats: Stats; 
-    rawCharacter: rawCharacter;
-    rawWeapon: rawWeapon; 
-    rawRelicList: any[]; 
+    rawCharacter: RawCharacter;
+    rawWeapon: RawWeapon; 
+    relicList: Relic[]; 
 }
 class CharacterInfo{
     globalEffectList:string[]
@@ -27,13 +31,15 @@ class CharacterInfo{
     }
 }
 
-function getDamageInfo({stats, rawCharacter, rawWeapon, rawRelicList}:InputParams):CharacterInfo|undefined{
+function getDamageInfo({stats, rawCharacter, rawWeapon, relicList}:InputParams):CharacterInfo|undefined{
     stats = JSON.parse(JSON.stringify(stats));
     //console.log(rawCharacter)
     //console.log(rawWeapon)
+    //console.log(relicList)
 
     const weapon:Weapon|undefined = getWeapon(rawWeapon);
     const character:Character|undefined = getCharacter(rawCharacter);
+    const relicSets:RelicSet[] = getRelicSetList(relicList);
     if(character === undefined){
         return undefined
     }
@@ -68,20 +74,21 @@ function getDamageInfo({stats, rawCharacter, rawWeapon, rawRelicList}:InputParam
     }
 
     const effect:SpecialEffects = new SpecialEffects(boostMultiplier);
-    console.log(effect);
-    console.log(globalEffectList);
+    //console.log(effect);
+    //console.log(globalEffectList);
     weapon.addEffectGlobal(stats, globalEffectList, effect);
-    console.log(effect);
-    console.log(globalEffectList);
+    //console.log(effect);
+    //console.log(globalEffectList);
     character.addEffectGlobal(stats, globalEffectList, effect);
-    console.log(effect);
-    console.log(globalEffectList);
+    //console.log(effect);
+    //console.log(globalEffectList);
 
     const info1:Info|undefined = character.getInfo1(stats, effect, weapon);
     const info2:Info|undefined = character.getInfo2(stats, effect, weapon);
     const info3:Info|undefined = character.getInfo3(stats, effect, weapon);
 
     const outputInfo:CharacterInfo = new CharacterInfo(globalEffectList, info1, info2, info3);
+    console.log(outputInfo);
     return outputInfo;
 }
 

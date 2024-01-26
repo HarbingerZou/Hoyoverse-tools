@@ -1,30 +1,8 @@
-type Element = "elec" | "imaginary" | "wind"|"fire"| "ice" | "quantum"|"physical"
+import { Stats } from "../../../pages/api/JSONStructure";
+
+type Element = "elec" | "imaginary" | "wind"|"fire"| "ice" | "quantum" | "physical"
 type Path =  "destruction" | "hunt" | "erudition" | "harmony" | "nihility" | "perservation" | "abundance"
 type RelicType = "HEAD" | "HAND" | "BODY" |"FOOT" | "NECK" |"OBJECT"
-interface Stats {
-    hpBase: number;
-    hpFinal: number;
-    attackBase: number;
-    attackFinal: number;
-    defenseBase: number;
-    defenseFinal: number;
-    speedBase: number;
-    speedFinal: number;
-    criticalChance: number;
-    criticalDamage: number;
-    stanceBreakRatio: number;
-    healRatio: number;
-    spRatio: number;
-    statusProbability: number;
-    statusResistance: number;
-    physicalAddHurt: number;
-    fireAddHurt: number;
-    iceAddHurt: number;
-    elecAddHurt: number;
-    windAddHurt: number;
-    quantumAddHurt: number;
-    imaginaryAddHurt: number;
-}
 
 interface addEffect{
     addEffectGlobal(stats:Stats, effectList:string[], effect:SpecialEffects): void;
@@ -84,4 +62,4 @@ class Multipliers{
 
 
 export { SpecialEffects, Multipliers };
-export type { Element, Path, Stats, addEffect, RelicType };
+export type { Element, Path, addEffect, RelicType };

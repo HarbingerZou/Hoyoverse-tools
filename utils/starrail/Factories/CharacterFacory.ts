@@ -1,18 +1,7 @@
-import { Element, Path, Stats,SpecialEffects,addEffect,Multipliers} from "./CommonInterfaces"
+import { Element, Path, SpecialEffects,addEffect,Multipliers} from "./CommonInterfaces"
 import { Weapon } from "./WeaponFactory";
 //just to store passed in Json
-interface rawCharacter {
-    id: number;
-    level:number;
-    basic_level: number;
-    skill_level: number;
-    ultimate_level: number;
-    talent_level:number
-    trace1: boolean;
-    trace2:boolean;
-    trace3:boolean;
-}
-
+import { RawCharacter, Stats } from "../../../pages/api/JSONStructure";
 //notes for each skill
 class Info{
     name:string;
@@ -143,7 +132,7 @@ class Dan_Heng_IL implements Character{
     }
 }
 
-function getCharacter(characterInfo:rawCharacter) : Character| undefined{
+function getCharacter(characterInfo:RawCharacter) : Character| undefined{
     if(characterInfo.id === 1213){
         return new Dan_Heng_IL(characterInfo.level, characterInfo.basic_level, characterInfo.skill_level, characterInfo.ultimate_level, characterInfo.talent_level,
             characterInfo.trace1,characterInfo.trace2,characterInfo.trace3);
@@ -154,4 +143,4 @@ function getCharacter(characterInfo:rawCharacter) : Character| undefined{
 }
 
 export { Info, getCharacter };
-export type { rawCharacter, Character };
+export type { Character };
