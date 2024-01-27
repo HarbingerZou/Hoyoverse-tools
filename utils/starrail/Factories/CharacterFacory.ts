@@ -1,7 +1,8 @@
-import { Element, Path, SpecialEffects,addEffect,Multipliers} from "./CommonInterfaces"
+import { Element, Path, SpecialEffects,addEffect,Multipliers, SpecialEffectsLocal} from "./CommonInterfaces"
 import { Weapon } from "./WeaponFactory";
 //just to store passed in Json
 import { RawCharacter, Stats } from "../../../pages/api/JSONStructure";
+import { RelicSet } from "./RelicFactory";
 //notes for each skill
 class Info{
     name:string;
@@ -41,9 +42,9 @@ interface Character extends addEffect{
 
     //eidolon?: number;
 
-    getInfo1(stats:Stats, effect: SpecialEffects, weapon:Weapon):Info|undefined;
-    getInfo2(stats:Stats, effect: SpecialEffects, weapon:Weapon):Info|undefined;
-    getInfo3(stats:Stats, effect: SpecialEffects, weapon:Weapon):Info|undefined;
+    getInfo1(stats:Stats, effect: SpecialEffects, weapon:Weapon, relicSets: RelicSet[]):Info|undefined;
+    getInfo2(stats:Stats, effect: SpecialEffects, weapon:Weapon, relicSets: RelicSet[]):Info|undefined;
+    getInfo3(stats:Stats, effect: SpecialEffects, weapon:Weapon, relicSets: RelicSet[]):Info|undefined;
 }
 
 class Dan_Heng_IL implements Character{
@@ -99,31 +100,39 @@ class Dan_Heng_IL implements Character{
         }
     }
 
-    getInfo1(stats:Stats, effect:SpecialEffects, weapon:Weapon): Info {
+    getInfo1(stats:Stats, effect:SpecialEffects, weapon:Weapon|undefined, relicSets:RelicSet[]): Info {
         const effectList:string[] = []
         //construct the multiplier for this skill
-        const multipliers:Multipliers = new Multipliers(stats.attackFinal, this.basic_data[this.basic_level][0],stats.criticalChance, stats.criticalDamage, effect, this.level, 1.32)
         
         const statsLocal:Stats = JSON.parse(JSON.stringify(stats));
-        //add weapon local effect
-        if(weapon!== undefined && typeof weapon.addEffectBasicAttack === "function" && weapon.path === this.path){
-            weapon.addEffectBasicAttack(statsLocal, effectList, multipliers);
-        }
 
+        //add weapon local effect
+        const effectLocal:SpecialEffectsLocal = new SpecialEffectsLocal(effect);
+        
+        if(weapon!== undefined && typeof weapon.addEffectBasicAttack === "function" && weapon.path === this.path){
+            weapon.addEffectBasicAttack(statsLocal, effectList, effectLocal);
+        }
+        for(const relicSet of relicSets){
+            if(typeof relicSet.addEffectBasicAttack === "function"){
+                relicSet.addEffectBasicAttack(statsLocal, effectList, effectLocal);
+            }
+        }
         //add charactrer local effect
-        const criticalDamageIncrease:number = 2.2*this.skill_data[this.skill_level];
+        const criticalDamageIncrease:number = 2.2*this.skill_data[this.skill_level-1];
         statsLocal.criticalDamage += criticalDamageIncrease;
         effectList.push(`Dracore Libre: CRIT DMG increase by ${criticalDamageIncrease*100}%`)
-        multipliers.boostMultiplier += 0.3;
+        effectLocal.boostMultiplierIncrease += 0.3;
         effectList.push(`Righteous Heart: Damage increase by 30%`)
         //add Relic Effecr
         //TODO
-
+        
+        const multipliers:Multipliers = new Multipliers(this.element, statsLocal, this.basic_data[this.basic_level-1][0], effectLocal, this.level, 1.32)
+        
         const value:string = multipliers.getDamage().toString();
         const info:Info = new Info("Divine Spear", value, effectList, multipliers);
         return info
-
     }
+
     getInfo2(stats:Stats): Info | undefined{
         return undefined;
     }

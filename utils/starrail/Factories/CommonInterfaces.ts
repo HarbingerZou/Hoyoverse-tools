@@ -6,30 +6,43 @@ type RelicType = "HEAD" | "HAND" | "BODY" |"FOOT" | "NECK" |"OBJECT"
 
 interface addEffect{
     addEffectGlobal(stats:Stats, effectList:string[], effect:SpecialEffects): void;
-    addEffectFollowUp?(stats:Stats, effectList:string[], multiplier:Multipliers):void;
-    addEffectUltimate?(stats:Stats, effectList:string[], multiplier:Multipliers):void;
-    addEffectSkill?(stats:Stats, effectList:string[], multiplier:Multipliers):void;
-    addEffectBasicAttack?(stats:Stats, effectList:string[], multiplier:Multipliers):void;
+    addEffectFollowUp?(stats:Stats, effectList:string[], effect:SpecialEffectsLocal):void;
+    addEffectUltimate?(stats:Stats, effectList:string[], effect:SpecialEffectsLocal):void;
+    addEffectSkill?(stats:Stats, effectList:string[], effect:SpecialEffectsLocal):void;
+    addEffectBasicAttack?(stats:Stats, effectList:string[], effect:SpecialEffectsLocal):void;
 }
 
 
 //this should be constructed outside of the character 
 //this should keep track of all global effect
 class SpecialEffects{
-    boostMultiplier:number
-    vulnerabilityMultiplier:number
+    boostMultiplierIncrease:number
+    vulnerabilityMultiplierIncrease:number
     defReduction:number
-    resMultiplier:number
+    resMultiplierIncrease:number
     toughnessMultiplier:number
-    constructor(boostMultiplier:number = 1, vulnerabilityMultiplier = 1, defReduction = 0, resMultiplier = 1, toughnessMultiplier =1){
-        this.boostMultiplier = boostMultiplier;
-        this.vulnerabilityMultiplier = vulnerabilityMultiplier;
+    constructor(boostMultiplierIncrease:number = 0, vulnerabilityMultiplierIncrease:number = 0, defReduction:number = 0, resMultiplierIncrease:number = 0, toughnessMultiplier:number = 0.9){
+        this.boostMultiplierIncrease = boostMultiplierIncrease;
+        this.vulnerabilityMultiplierIncrease = vulnerabilityMultiplierIncrease;
         this.defReduction = defReduction;
-        this.resMultiplier = resMultiplier;
+        this.resMultiplierIncrease = resMultiplierIncrease;
         this.toughnessMultiplier = toughnessMultiplier;
     }
 }
-
+class SpecialEffectsLocal{
+    boostMultiplierIncrease:number
+    vulnerabilityMultiplierIncrease:number
+    defReduction:number
+    resMultiplierIncrease:number
+    toughnessMultiplier:number
+    constructor(globalEffect:SpecialEffects){
+        this.boostMultiplierIncrease = globalEffect.boostMultiplierIncrease;
+        this.vulnerabilityMultiplierIncrease = globalEffect.vulnerabilityMultiplierIncrease;
+        this.defReduction = globalEffect.defReduction;
+        this.resMultiplierIncrease = globalEffect.resMultiplierIncrease;
+        this.toughnessMultiplier = globalEffect.toughnessMultiplier;
+    }
+}
 
 //this should be constructed for each skill
 class Multipliers{
@@ -43,14 +56,14 @@ class Multipliers{
     toughnessMultiplier:number
     targetCount:number
 
-    constructor(attack:number, skillMultiplier:number, criticalChance: number,criticalDamage:number, effects:SpecialEffects, level:number, targetCount:number, enemyLevel:number = 80){
-        this.attack = attack
+    constructor(element:Element, stats:Stats, skillMultiplier:number, effects:SpecialEffectsLocal, level:number, targetCount:number, enemyLevel:number = 80){
+        this.attack = stats.attackFinal
         this.skillMultiplier = skillMultiplier;
-        this.critMultiplier = 1+criticalChance*criticalDamage
-        this.boostMultiplier = effects.boostMultiplier;
-        this.vulnerabilityMultiplier = effects.vulnerabilityMultiplier;
+        this.critMultiplier = 1+stats.criticalChance*stats.criticalDamage
+        this.boostMultiplier = effects.boostMultiplierIncrease + 1 + getElementDamage(element, stats);
+        this.vulnerabilityMultiplier = effects.vulnerabilityMultiplierIncrease+1;
         this.defMultiplier = (level+20)/((enemyLevel+20)*(1-effects.defReduction) + level + 20)
-        this.resMultiplier = effects.resMultiplier;
+        this.resMultiplier = effects.resMultiplierIncrease+1;
         this.toughnessMultiplier = effects.toughnessMultiplier;
         this.targetCount = targetCount
     }
@@ -60,6 +73,23 @@ class Multipliers{
     }
 }
 
-
-export { SpecialEffects, Multipliers };
+function getElementDamage(element:Element, stats:Stats){
+    switch (element){
+        case "elec":
+            return stats.elecAddHurt;
+        case "imaginary":
+            return stats.imaginaryAddHurt;
+        case "wind":
+            return stats.windAddHurt;
+        case "fire":
+            return stats.fireAddHurt;
+        case "ice":
+            return stats.fireAddHurt;
+        case "quantum":
+            return stats.quantumAddHurt;
+        case "physical":
+            return stats.physicalAddHurt
+    }
+}
+export { SpecialEffects, Multipliers, SpecialEffectsLocal };
 export type { Element, Path, addEffect, RelicType };

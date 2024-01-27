@@ -33,7 +33,11 @@ class brighter_than_the_sun implements Weapon{
 }
 
 
-function getWeapon(weapon:RawWeapon):Weapon | undefined{
+function getWeapon(weapon:RawWeapon|undefined):Weapon | undefined{
+    if(weapon === undefined){
+        return undefined
+    }
+    
     if(weapon.id == 23015){
         return new brighter_than_the_sun(weapon.level, weapon.promotion, weapon.rankLevel);
     }else{
