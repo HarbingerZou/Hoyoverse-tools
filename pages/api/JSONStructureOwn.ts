@@ -33,6 +33,7 @@ class FormattedRelic extends Relic{
 class CharacterWithStats implements RawCharacter{
     id: number;
     level: number;
+    rank: number;
     basic_level: number;
     skill_level: number;
     ultimate_level: number;
@@ -54,6 +55,7 @@ class CharacterWithStats implements RawCharacter{
         this.id = rawCharacter.id;
         this.totalScore = 0;
         this.level = rawCharacter.level;
+        this.rank = rawCharacter.rank
         this.basic_level = rawCharacter.basic_level;
         this.skill_level = rawCharacter.skill_level;
         this.ultimate_level= rawCharacter.ultimate_level;
@@ -73,13 +75,20 @@ class CharacterWithStats implements RawCharacter{
     }
 }
 
-interface UserInfo{
-    uid:number,
-    name:string,
-    level:number,
-    avatars:CharacterWithStats[],
+class UserInfo{
+    uid:number
+    name:string
+    level:number
+    avatars:CharacterWithStats[]
     factors:Factors
+    constructor(uid:number, name:string, level:number, avatars:CharacterWithStats[], factors:Factors){
+        this.uid = uid
+        this.name = name
+        this.level = level
+        this.avatars = avatars
+        this.factors = factors
+    }
 }
 
-export { FormattedRelic, CharacterWithStats };
-export type { ForMattedAffix, UserInfo };
+export { FormattedRelic, CharacterWithStats, UserInfo };
+export type { ForMattedAffix };

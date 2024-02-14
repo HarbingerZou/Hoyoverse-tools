@@ -6,7 +6,7 @@ import setConfig from '../../models/starRailConfig/setConfigModel';
 import getRelicScore from "../../utils/starrail/getRelicScore"
 import getWeights from '../../utils/starrail/getWeight';
 import factors from '../../utils/starrail/scoreFactor';
-
+import { inspect } from '../../utils/inspectFunction';
 import {getDamageInfo} from '../../utils/starrail/Factories/getDamageInfo';
 
 import { Stats } from './JSONStructure';
@@ -78,52 +78,15 @@ function parseRelic(relic:RawRelic,relic_config:RelicConfig,affix_config:AffixCo
     return formatted_relic;
 }
 
+async function formatUserInfo(data:any):Promise<UserInfo | undefined>{
+    const UID = data.uid
+    const nickname = data.nickname
+    const level = data.level;
+    const userInfo: UserInfo =  new UserInfo(UID, nickname, data.level, [], factors)
 
-
-export default async function handler(req:any, res:any) {
-    const UID = req.query.uid
-    const response = await fetch(`https://api.yshelper.com/ys/getHSRPlayerInfo.php?uid=${UID}`)
-    const data = await response.json();
-
-    //console.log(UID, data.retcode);
-
-    if(data.retcode !== 0){
-        return res.status(200).json({});
-    }
-    
-    if (!cachedRelicConfig) {
-        const rawRelicConfig = await relicConfig.find();
-        cachedRelicConfig = JSON.parse(JSON.stringify(rawRelicConfig[0]));
-    }
-
-    if (!cachedAffixConfig) {
-        const rawAffixConfig = await affixConfig.find();
-        cachedAffixConfig = JSON.parse(JSON.stringify(rawAffixConfig[0]));
-    }
-
-    if (!cachedAvatarConfig) {
-        const rawAvatarConfig = await avatarConfig.find();
-        cachedAvatarConfig = JSON.parse(JSON.stringify(rawAvatarConfig));
-    }
-    if(!cachedSetConfig){
-        const rawSetConfig = await setConfig.find();
-        cachedSetConfig = JSON.parse(JSON.stringify(rawSetConfig[0]));
-    }
-
-    //const raw_relic_score = await Character_to_relic.find();
-    //const relic_score = JSON.parse(JSON.stringify(raw_relic_score[0]));
-
-    const userInfo: UserInfo= {
-        uid: UID,
-        name: data.nickname,
-        level: data.level,
-        avatars: [],
-        factors:  factors
-    };
-
-    for(const avatar of [data.assistAvatar,...data.showAvatarList]){ 
+    for(const avatar of [...data.assistAvatarList,...data.showAvatarList]){ 
         if(!cachedAvatarConfig){
-            return;
+            return undefined;
         }
 
         //raw data
@@ -132,11 +95,13 @@ export default async function handler(req:any, res:any) {
             //The config of this character is not added;
             continue;
         }
+
         const skillList:RawSkill[] = avatar.skillList;
 
         const rawAvatar:RawCharacter = {
             id: avatar.avatarId,
             level: avatar.level,
+            rank:avatar.rank,
             basic_level: skillList[0].level,
             skill_level: skillList[1].level,
             ultimate_level: skillList[2].level,
@@ -185,8 +150,43 @@ export default async function handler(req:any, res:any) {
         formattedAvatar.weights = weights;
         userInfo.avatars.push(formattedAvatar);
     }
-    
-    //console.log(userInfo)
+    return userInfo;
+}
 
-    return res.status(200).json(userInfo)
+export default async function handler(req:any, res:any) {
+    const UID = req.query.uid
+    const response = await fetch(`https://api.yshelper.com/ys/getHSRPlayerInfo.php?uid=${UID}`)
+    const data = await response.json();
+
+    console.log(UID, data.retcode);
+
+    if(data.retcode !== 0){
+        return res.status(200).json({});
+    }
+    
+    if (!cachedRelicConfig) {
+        const rawRelicConfig = await relicConfig.find();
+        cachedRelicConfig = JSON.parse(JSON.stringify(rawRelicConfig[0]));
+    }
+
+    if (!cachedAffixConfig) {
+        const rawAffixConfig = await affixConfig.find();
+        cachedAffixConfig = JSON.parse(JSON.stringify(rawAffixConfig[0]));
+    }
+
+    if (!cachedAvatarConfig) {
+        const rawAvatarConfig = await avatarConfig.find();
+        cachedAvatarConfig = JSON.parse(JSON.stringify(rawAvatarConfig));
+    }
+    if(!cachedSetConfig){
+        const rawSetConfig = await setConfig.find();
+        cachedSetConfig = JSON.parse(JSON.stringify(rawSetConfig[0]));
+    }
+    
+    const userInfo:UserInfo|undefined = await inspect(() => formatUserInfo(data))
+    if(userInfo == undefined){
+        return res.status(500).json({Error:"Temporary error fetching user infos"})
+    }else{
+        return res.status(200).json(userInfo)
+    }
 }

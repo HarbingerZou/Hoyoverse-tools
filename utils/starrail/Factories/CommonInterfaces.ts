@@ -12,9 +12,49 @@ interface addEffect{
     addEffectBasicAttack?(stats:Stats, effectList:string[], effect:SpecialEffectsLocal):void;
 }
 
+interface addEffectTeam{
+    addTeamEffectGlobal?(stats:Stats, effectList:string[], effect:TeamSpecialEffects,): void;
+    addTeamEffectFollowUp?(stats:Stats, effectList:string[], effect:TeamSpecialEffectsLocal):void;
+    addTeamEffectUltimate?(stats:Stats, effectList:string[], effect:TeamSpecialEffectsLocal):void;
+    addTeamEffectSkill?(stats:Stats, effectList:string[], effect:TeamSpecialEffectsLocal):void;
+    addTeamEffectBasicAttack?(stats:Stats, effectList:string[], effect:TeamSpecialEffectsLocal):void;
+}
 
 //this should be constructed outside of the character 
 //this should keep track of all global effect
+
+//This class should be used for support characters
+//This Effects should be shared among the entire team.
+class TeamSpecialEffects{
+    boostMultiplierIncrease:number
+    vulnerabilityMultiplierIncrease:number
+    defReduction:number
+    resMultiplierIncrease:number
+    toughnessMultiplier:number
+    constructor(boostMultiplierIncrease:number = 0, vulnerabilityMultiplierIncrease:number = 0, defReduction:number = 0, resMultiplierIncrease:number = 0, toughnessMultiplier:number = 0.9){
+        this.boostMultiplierIncrease = boostMultiplierIncrease;
+        this.vulnerabilityMultiplierIncrease = vulnerabilityMultiplierIncrease;
+        this.defReduction = defReduction;
+        this.resMultiplierIncrease = resMultiplierIncrease;
+        this.toughnessMultiplier = toughnessMultiplier;
+    }
+}
+// Team specialeffectsLocal
+class TeamSpecialEffectsLocal{
+    boostMultiplierIncrease:number
+    vulnerabilityMultiplierIncrease:number
+    defReduction:number
+    resMultiplierIncrease:number
+    toughnessMultiplier:number
+    constructor(boostMultiplierIncrease:number = 0, vulnerabilityMultiplierIncrease:number = 0, defReduction:number = 0, resMultiplierIncrease:number = 0, toughnessMultiplier:number = 0.9){
+        this.boostMultiplierIncrease = boostMultiplierIncrease;
+        this.vulnerabilityMultiplierIncrease = vulnerabilityMultiplierIncrease;
+        this.defReduction = defReduction;
+        this.resMultiplierIncrease = resMultiplierIncrease;
+        this.toughnessMultiplier = toughnessMultiplier;
+    }
+}
+
 class SpecialEffects{
     boostMultiplierIncrease:number
     vulnerabilityMultiplierIncrease:number
@@ -29,6 +69,7 @@ class SpecialEffects{
         this.toughnessMultiplier = toughnessMultiplier;
     }
 }
+
 class SpecialEffectsLocal{
     boostMultiplierIncrease:number
     vulnerabilityMultiplierIncrease:number

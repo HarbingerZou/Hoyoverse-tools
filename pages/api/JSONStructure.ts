@@ -27,6 +27,7 @@ interface RelicConfigInstance{
 interface RawCharacter {
     id: number;
     level:number;
+    rank:number;
     basic_level: number;
     skill_level: number;
     ultimate_level: number;

@@ -40,8 +40,8 @@ interface Character extends addEffect{
     trace2:boolean;
     trace3:boolean;
 
-    //eidolon?: number;
-
+    eidolon: number;
+    //can be modified to trigger team members effects
     getInfo1(stats:Stats, effect: SpecialEffects, weapon:Weapon, relicSets: RelicSet[]):Info|undefined;
     getInfo2(stats:Stats, effect: SpecialEffects, weapon:Weapon, relicSets: RelicSet[]):Info|undefined;
     getInfo3(stats:Stats, effect: SpecialEffects, weapon:Weapon, relicSets: RelicSet[]):Info|undefined;
@@ -68,13 +68,14 @@ class Dan_Heng_IL implements Character{
     trace2: boolean;
     trace3: boolean;
 
-    //eidolon: number;
+    eidolon: number;
 
-    constructor(level:number, basic_level:number, skill_level:number, ultimdate_level:number, talent_level:number, trace1:boolean, trace2:boolean, trace3:boolean){
+    constructor(level:number, eidolon:number, basic_level:number, skill_level:number, ultimdate_level:number, talent_level:number, trace1:boolean, trace2:boolean, trace3:boolean){
         this.name = "Dan Heng IL";
         this.path = "destruction";
         this.element = "imaginary";
         this.level = level;
+        this.eidolon = eidolon
         this.basic_level = basic_level;
         this.skill_level = skill_level;
         this.ultimate_level = ultimdate_level;
@@ -143,7 +144,7 @@ class Dan_Heng_IL implements Character{
 
 function getCharacter(characterInfo:RawCharacter) : Character| undefined{
     if(characterInfo.id === 1213){
-        return new Dan_Heng_IL(characterInfo.level, characterInfo.basic_level, characterInfo.skill_level, characterInfo.ultimate_level, characterInfo.talent_level,
+        return new Dan_Heng_IL(characterInfo.level,characterInfo.rank ,characterInfo.basic_level, characterInfo.skill_level, characterInfo.ultimate_level, characterInfo.talent_level,
             characterInfo.trace1,characterInfo.trace2,characterInfo.trace3);
 
     }
