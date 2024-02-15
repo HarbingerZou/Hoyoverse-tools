@@ -19,10 +19,10 @@ class Info{
     }
 }
 
-interface Character extends addEffect{
-    name:string;
-    path:Path;
-    element:Element;
+abstract class Character<TBasic, TSkill, TUltimate, TTalent> implements addEffect{
+    name: string;
+    path: Path;
+    element: Element;
     level:number;
     basic_level: number;
     skill_level: number;
@@ -31,65 +31,112 @@ interface Character extends addEffect{
 
     //use ang instead of number for multiple value store
     //Example Dan Heng
-    basic_data:any[];
-    skill_data:any[];
-    ultimate_data:any[];
-    talent_data:any[];
+    basic_data: TBasic;
+    skill_data: TSkill;
+    ultimate_data: TUltimate;
+    talent_data: TTalent;
 
-    trace1:boolean;
-    trace2:boolean;
-    trace3:boolean;
-
-    eidolon: number;
-    //can be modified to trigger team members effects
-    getInfo1(stats:Stats, effect: SpecialEffects, weapon:Weapon, relicSets: RelicSet[]):Info|undefined;
-    getInfo2(stats:Stats, effect: SpecialEffects, weapon:Weapon, relicSets: RelicSet[]):Info|undefined;
-    getInfo3(stats:Stats, effect: SpecialEffects, weapon:Weapon, relicSets: RelicSet[]):Info|undefined;
-}
-
-class Dan_Heng_IL implements Character{
-    name: string;
-    path: Path;
-    element: Element;
-    level: number;
-    basic_level: number;
-    skill_level: number;
-    ultimate_level: number;
-    talent_level: number;
-
-    //basic for Fulgurant Leap
-    basic_data:number[][];
-    
-    //skill for Dracore Libre
-    skill_data:number[];
-    ultimate_data:number[];
-    talent_data: number[];
     trace1: boolean;
     trace2: boolean;
     trace3: boolean;
 
     eidolon: number;
-
-    constructor(level:number, eidolon:number, basic_level:number, skill_level:number, ultimdate_level:number, talent_level:number, trace1:boolean, trace2:boolean, trace3:boolean){
-        this.name = "Dan Heng IL";
-        this.path = "destruction";
-        this.element = "imaginary";
+    constructor(name:string, eidolon:number,  path:Path, element:Element, level:number,
+            basic_level:number, skill_level:number, ultimdate_level:number, talent_level:number,
+            trace1:boolean, trace2:boolean, trace3:boolean,
+            basic_data: TBasic, skill_data: TSkill, ultimate_data: TUltimate, talent_data: TTalent
+           ){
+        this.name = name;
+        this.eidolon = eidolon;
+        this.path = path;
+        this.element = element;
         this.level = level;
-        this.eidolon = eidolon
         this.basic_level = basic_level;
         this.skill_level = skill_level;
         this.ultimate_level = ultimdate_level;
         this.talent_level = talent_level;
-        this.basic_data = [[1.9,2.5],[2.28,3],[2.66,3.5],[3.04,4],[3.42,4.5],[3.8,5], [4.18,5.5]]
-        this.skill_data = [0.06, 0.066, 0.072, 0.078, 0.084, 0.09, 0.0975, 0.105, 0.1125, 0.12, 0.126, 0.132];
-        this.ultimate_data = [1.8, 1.92, 2.04, 2.16, 2.28, 2.4, 2.55, 2.7, 2.85, 3, 3.12, 3.24];
-        this.talent_data = [0.05, 0.055, 0.06, 0.065, 0.07, 0.075, 0.08125, 0.0875, 0.09375, 0.1, 0.105, 0.11]
         
         this.trace1 = trace1;
         this.trace2 = trace2;
-        this.trace3 = trace3;
+        this.trace3 = trace3
 
-        //this.eidolon = eidolon;
+        this.basic_data = basic_data
+        this.skill_data = skill_data
+        this.ultimate_data = ultimate_data
+        this.talent_data = talent_data
+    }
+
+    abstract addEffectGlobal(stats: Stats, effectList: string[], effect: SpecialEffects): void 
+
+    //can be modified to trigger team members effects
+    abstract getInfo1(stats:Stats, effect: SpecialEffects, weapon:Weapon, relicSets: RelicSet[]):Info|undefined;
+    abstract getInfo2(stats:Stats, effect: SpecialEffects, weapon:Weapon, relicSets: RelicSet[]):Info|undefined;
+    abstract getInfo3(stats:Stats, effect: SpecialEffects, weapon:Weapon, relicSets: RelicSet[]):Info|undefined;
+
+
+    addWeaponRelicEffectBasicAttack(weapon:Weapon|undefined, relicSets:RelicSet[], statsLocal:Stats, effectList:string[], effectLocal:SpecialEffectsLocal):void{
+        if(weapon!== undefined && typeof weapon.addEffectBasicAttack === "function" && weapon.path === this.path){
+            weapon.addEffectBasicAttack(statsLocal, effectList, effectLocal);
+        }
+        for(const relicSet of relicSets){
+            if(typeof relicSet.addEffectBasicAttack === "function"){
+                relicSet.addEffectBasicAttack(statsLocal, effectList, effectLocal);
+            }
+        }
+    }
+    addWeaponRelicEffectFollowUp(weapon:Weapon|undefined, relicSets:RelicSet[], statsLocal:Stats, effectList:string[], effectLocal:SpecialEffectsLocal):void{
+        if(weapon!== undefined && typeof weapon.addEffectFollowUp === "function" && weapon.path === this.path){
+            weapon.addEffectFollowUp(statsLocal, effectList, effectLocal);
+        }
+        for(const relicSet of relicSets){
+            if(typeof relicSet.addEffectFollowUp === "function"){
+                relicSet.addEffectFollowUp(statsLocal, effectList, effectLocal);
+            }
+        }
+    }
+
+    addWeaponRelicEffectSkill(weapon:Weapon|undefined, relicSets:RelicSet[], statsLocal:Stats, effectList:string[], effectLocal:SpecialEffectsLocal):void{
+        if(weapon!== undefined && typeof weapon.addEffectSkill === "function" && weapon.path === this.path){
+            weapon.addEffectSkill(statsLocal, effectList, effectLocal);
+        }
+        for(const relicSet of relicSets){
+            if(typeof relicSet.addEffectSkill === "function"){
+                relicSet.addEffectSkill(statsLocal, effectList, effectLocal);
+            }
+        }
+    }
+
+    addWeaponRelicEffectUltimate(weapon:Weapon|undefined, relicSets:RelicSet[], statsLocal:Stats, effectList:string[], effectLocal:SpecialEffectsLocal):void{
+        if(weapon!== undefined && typeof weapon.addEffectUltimate === "function" && weapon.path === this.path){
+            weapon.addEffectUltimate(statsLocal, effectList, effectLocal);
+        }
+        for(const relicSet of relicSets){
+            if(typeof relicSet.addEffectUltimate === "function"){
+                relicSet.addEffectUltimate(statsLocal, effectList, effectLocal);
+            }
+        }
+    }
+}
+
+class Dan_Heng_IL extends Character<number[][], number[], number[], number[]> {
+    constructor(level: number, eidolon: number, basic_level: number, skill_level: number, ultimate_level: number, talent_level: number, trace1: boolean, trace2: boolean, trace3: boolean) {
+        const name: string = "Dan Heng IL";
+        const path: Path = "destruction"; 
+        const element: Element = "imaginary"; 
+        
+        // Basic for Fulgurant Leap
+        const basic_data: number[][] = [[1.9,2.5],[2.28,3],[2.66,3.5],[3.04,4],[3.42,4.5],[3.8,5], [4.18,5.5]];
+        
+        // Skill for Dracore Libre
+        const skill_data: number[] = [0.06, 0.066, 0.072, 0.078, 0.084, 0.09, 0.0975, 0.105, 0.1125, 0.12, 0.126, 0.132];
+        const ultimate_data: number[] = [1.8, 1.92, 2.04, 2.16, 2.28, 2.4, 2.55, 2.7, 2.85, 3, 3.12, 3.24];
+        const talent_data: number[] = [0.05, 0.055, 0.06, 0.065, 0.07, 0.075, 0.08125, 0.0875, 0.09375, 0.1, 0.105, 0.11]
+       
+        super(name, eidolon,  path, element, level,
+            basic_level, skill_level, ultimate_level, talent_level,
+            trace1, trace2, trace3,
+            basic_data, skill_data, ultimate_data, talent_data
+           ) 
     }
     
 
@@ -110,22 +157,14 @@ class Dan_Heng_IL implements Character{
         //add weapon local effect
         const effectLocal:SpecialEffectsLocal = new SpecialEffectsLocal(effect);
         
-        if(weapon!== undefined && typeof weapon.addEffectBasicAttack === "function" && weapon.path === this.path){
-            weapon.addEffectBasicAttack(statsLocal, effectList, effectLocal);
-        }
-        for(const relicSet of relicSets){
-            if(typeof relicSet.addEffectBasicAttack === "function"){
-                relicSet.addEffectBasicAttack(statsLocal, effectList, effectLocal);
-            }
-        }
+        this.addWeaponRelicEffectBasicAttack(weapon, relicSets, statsLocal,effectList,effectLocal)
         //add charactrer local effect
         const criticalDamageIncrease:number = 2.2*this.skill_data[this.skill_level-1];
         statsLocal.criticalDamage += criticalDamageIncrease;
         effectList.push(`Dracore Libre: CRIT DMG increase by ${criticalDamageIncrease*100}%`)
         effectLocal.boostMultiplierIncrease += 0.3;
         effectList.push(`Righteous Heart: Damage increase by 30%`)
-        //add Relic Effecr
-        //TODO
+   
         
         const multipliers:Multipliers = new Multipliers(this.element, statsLocal, this.basic_data[this.basic_level-1][0], effectLocal, this.level, 1.32)
         
@@ -142,7 +181,7 @@ class Dan_Heng_IL implements Character{
     }
 }
 
-function getCharacter(characterInfo:RawCharacter) : Character| undefined{
+function getCharacter(characterInfo:RawCharacter) : Character<any[], any[], any[], any[]>| undefined{
     if(characterInfo.id === 1213){
         return new Dan_Heng_IL(characterInfo.level,characterInfo.rank ,characterInfo.basic_level, characterInfo.skill_level, characterInfo.ultimate_level, characterInfo.talent_level,
             characterInfo.trace1,characterInfo.trace2,characterInfo.trace3);

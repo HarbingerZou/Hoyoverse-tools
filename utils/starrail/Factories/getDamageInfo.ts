@@ -39,7 +39,7 @@ function getDamageInfo({stats, rawCharacter, rawWeapon, relicList}:InputParams):
     //console.log(relicList)
 
     const weapon:Weapon|undefined = getWeapon(rawWeapon);
-    const character:Character|undefined = getCharacter(rawCharacter);
+    const character:Character<any[], any[], any[], any[]>|undefined = getCharacter(rawCharacter);
     const relicSets:RelicSet[] = getRelicSetList(relicList);
     if(character === undefined){
         return undefined
