@@ -1,4 +1,4 @@
-import getWeights from "../../../utils/starrail/getWeight";
+import getWeights from "../../utils/starrail/getWeight";
 export default async function(req, res){
     const input = req.body
     const {name} = input

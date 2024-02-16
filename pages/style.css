@@ -1,11 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 body {
 	font-family: 'Fira Sans Extra Condensed', sans-serif;
 	/*background-color: #0c101f;*/
-	color: silver;
+	color: #c0c0c0;
 	font-size: clamp(14px, 2vw, 16px);
 	padding: 0px;
 	margin: 0px;
-	background-color: #0c0e1b;
 }
 
 
