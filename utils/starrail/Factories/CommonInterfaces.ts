@@ -1,8 +1,5 @@
 import { Stats } from "../../../pages/api/JSONStructure";
-
-type Element = "elec" | "imaginary" | "wind"|"fire"| "ice" | "quantum" | "physical"
-type Path =  "destruction" | "hunt" | "erudition" | "harmony" | "nihility" | "perservation" | "abundance"
-type RelicType = "HEAD" | "HAND" | "BODY" |"FOOT" | "NECK" |"OBJECT"
+import  { Element, Path, RelicType, MultipliersInterface} from "../SharedTypes"
 
 interface addEffect{
     addEffectGlobal(stats:Stats, effectList:string[], effect:SpecialEffects): void;
@@ -86,7 +83,7 @@ class SpecialEffectsLocal{
 }
 
 //this should be constructed for each skill
-class Multipliers{
+class Multipliers implements MultipliersInterface{
     attack:number;
     skillMultiplier:number;
     critMultiplier:number
