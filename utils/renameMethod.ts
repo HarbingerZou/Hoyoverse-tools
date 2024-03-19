@@ -1,4 +1,5 @@
 import { Element, RelicType } from "./starrail/Factories/CommonInterfaces";
+import { Stat } from "./starrail/SharedTypes";
 function elementMapper(element:Element):string{
     switch (element) {
         case "elec":
@@ -40,4 +41,22 @@ function parseType(type:RelicType):string{
     
 }
 
-export {elementMapper, parseType}
+function parseStat(stat:Stat):string{
+    return stat.replace("%","")
+}
+
+function parseValue(value:number, type:Stat):string{
+    let valueString
+    if(value < 1){
+        valueString = (Math.floor(value*1000)/10).toString()+"%";
+    }else{
+        if(type === "Speed"){
+            valueString = (Math.floor(value*10)/10).toString();
+        }else{
+            valueString = Math.floor(value).toString();
+        }
+    }
+    return valueString
+    
+}
+export {elementMapper, parseType, parseStat, parseValue}

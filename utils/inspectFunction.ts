@@ -1,5 +1,8 @@
 import sendMessageToEmail from "./sendMessageToEmail";
 
+//This method checks if a function sueccessfully finish
+//If the function fails, send an error message to the email.
+
 export async function inspect<T>(method:  () => Promise<T> | T): Promise<T|undefined> {
     try {
         const methodResult = await method(); // Assuming `method` could be async

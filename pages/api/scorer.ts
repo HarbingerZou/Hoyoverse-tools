@@ -13,9 +13,9 @@ import { Stats } from './JSONStructure';
 import { RawCharacter } from './JSONStructure';
 import { AvatarConfig, RelicConfig, SetConfig, AffixConfig, RawAffix, RawRelic, RawSkill, Factors, RawSubAffix } from './JSONStructure';
 
-import { parseType } from '../../utils/renameMethod';
-import { ForMattedAffix, FormattedRelic, UserInfo, CharacterWithStats } from './JSONStructureOwn';
-
+import { parseType, parseValue } from '../../utils/renameMethod';
+import { ForMattedAffix, FormattedRelic, UserInfo, CharacterWithStats, ForMattedSubAffix } from './JSONStructureOwn';
+import { Stat } from '../../utils/starrail/SharedTypes';
 let cachedRelicConfig:RelicConfig|undefined = undefined;
 let cachedAffixConfig:AffixConfig|undefined = undefined;
 let cachedAvatarConfig:AvatarConfig[]|undefined = undefined;
@@ -23,38 +23,22 @@ let cachedSetConfig:SetConfig|undefined = undefined;
 
 
 function parseMainAffix(affix:RawAffix,affix_config:any):ForMattedAffix{
-    const type:string = affix_config[affix.type.toString()];
+    const type:Stat = affix_config[affix.type.toString()];
     let value:number = affix.value;
-    let valueString:string;
-    if(value < 1){
-        valueString = (Math.floor(value*1000)/10).toString()+"%";
-    }else{
-        if(type === "Speed"){
-            valueString = (Math.floor(value*10)/10).toString();
-        }else{
-            valueString = Math.floor(value).toString();
-        }
-    }
+    let valueString:string = parseValue(value, type);
     return {type,value,valueString}
 }
 
-function parseSubAffix(affix:RawSubAffix, affix_config:any):ForMattedAffix{
+function parseSubAffix(affix:RawSubAffix, affix_config:any):ForMattedSubAffix{
     //console.log(affix)
-    const type:string = affix_config[affix.info.type.toString()];
+    const type:Stat = affix_config[affix.info.type.toString()];
+    const count = affix.count
+    //console.log(count)
     let value:number = affix.info.value;
-    let valueString:string;
-    if(value < 1){
-        valueString = (Math.floor(value*1000)/10).toString()+"%";
-    }else{
-        if(type === "Speed"){
-            valueString = (Math.floor(value*10)/10).toString();
-        }else{
-            valueString = Math.floor(value).toString();
-        }
-    }
-    return {type,value,valueString}
-
+    let valueString:string = parseValue(value, type);
+    return {type,count,value,valueString}
 }
+
 
 function parseRelic(relic:RawRelic,relic_config:RelicConfig,affix_config:AffixConfig,set_config:SetConfig):FormattedRelic{
     const level:number = relic.level;
@@ -62,13 +46,13 @@ function parseRelic(relic:RawRelic,relic_config:RelicConfig,affix_config:AffixCo
     const setId:number = relic_config[relic.id].SetID;
 
     //warning 
-    const set:string = set_config[setId.toString()];
+    const setName:string = set_config[setId.toString()];
     const rarityString:string = relic_config[relic.id].Rarity.slice(-1);
     const rarity:number = parseInt(rarityString)
 
     const mainAffix:ForMattedAffix = parseMainAffix(relic.mainAffix, affix_config)
     
-    const formatted_relic:FormattedRelic = new FormattedRelic(level, type, setId, set, rarity, mainAffix)
+    const formatted_relic:FormattedRelic = new FormattedRelic(level, type, setId, setName, rarity, mainAffix)
 
     for(const subAffix of relic.subAffixList){
         const formatted_subAffix = parseSubAffix(subAffix, affix_config);

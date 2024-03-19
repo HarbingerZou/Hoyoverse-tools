@@ -1,6 +1,8 @@
 import { useState } from "react";
 type AsyncFunction = (...args: any[]) => Promise<any>;
-//return false if the async function is not executed, return the result of async function other wise.
+
+//return false if the async function is not executed
+//return the result of async function other wise.
 export default function useRacingCheckWrapper(asyncFunction:AsyncFunction){
     const [inProcessing, setInProcessing] = useState(false);
     const wrappedFunction = async (...args: any[]) => {

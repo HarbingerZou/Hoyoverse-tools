@@ -6,12 +6,12 @@ import { RelicSet } from "./RelicFactory";
 //notes for each skill
 class Info{
     name:string;
-    value:string;
+    value:number;
     //for effect
     notes:string[];
     //multiplier
     multipliers:Multipliers;
-    constructor(name:string, value:string, notes:string[], multipliers:Multipliers){
+    constructor(name:string, value:number, notes:string[], multipliers:Multipliers){
         this.name = name;
         this.value = value;
         this.notes = notes;
@@ -168,7 +168,7 @@ class Dan_Heng_IL extends Character<number[][], number[], number[], number[]> {
         
         const multipliers:Multipliers = new Multipliers(this.element, statsLocal, this.basic_data[this.basic_level-1][0], effectLocal, this.level, 1.32)
         
-        const value:string = multipliers.getDamage().toString();
+        const value:number = multipliers.getDamage();
         const info:Info = new Info("Divine Spear", value, effectList, multipliers);
         return info
     }

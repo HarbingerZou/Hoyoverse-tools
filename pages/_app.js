@@ -1,5 +1,5 @@
 import "./tailwind.css"
-import "./style.css"
+//import "./style.css"
 import Head from "next/head"
 import Header from "../components/header"
 import Script from 'next/script'
@@ -20,9 +20,7 @@ export default function MyApp({ Component, pageProps:{session, ...pageProps} }) 
       <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6975458143406021"
         crossOrigin="anonymous"></script>
       <Header />
-      <div className="min-h-screen bg-primary">
         <Component {...pageProps} />
-      </div>
     </SessionProvider>
     )
 }

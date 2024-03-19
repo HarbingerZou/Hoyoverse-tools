@@ -5,9 +5,17 @@ import { Factors } from './JSONStructure';
 import { Element } from '../../utils/starrail/Factories/CommonInterfaces';
 import { Affix , Relic } from '../../utils/starrail/Factories/RelicFactory';
 import { CharacterInfo } from '../../utils/starrail/Factories/getDamageInfo';
+import { Stat } from '../../utils/starrail/SharedTypes';
 
 interface ForMattedAffix extends Affix{
-    type:string,
+    type:Stat,
+    value:number,
+    valueString:string
+}
+
+interface ForMattedSubAffix extends ForMattedAffix{
+    type:Stat,
+    count:number,
     value:number,
     valueString:string
 }
@@ -16,12 +24,12 @@ class FormattedRelic extends Relic{
     level!: number;
     type!: string;
     setID!: number;
-    set!: string;
+    setName!: string;
     rarity!: number;
     score:number|undefined;
     rate:string|undefined;
     mainAffix!: ForMattedAffix;
-    subAffix!: ForMattedAffix[];
+    subAffix!: ForMattedSubAffix[];
     constructor(level:number, type:string, setID:number,  set:string, rarity:number, mainAffix:ForMattedAffix){
         super(level, type, setID, set, rarity, mainAffix)
         this.score = undefined;
@@ -91,4 +99,4 @@ class UserInfo{
 }
 
 export { FormattedRelic, CharacterWithStats, UserInfo };
-export type { ForMattedAffix };
+export type { ForMattedAffix , ForMattedSubAffix};
