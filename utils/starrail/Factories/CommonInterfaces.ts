@@ -1,56 +1,18 @@
 import { Stats } from "../../../pages/api/JSONStructure";
 import  { Element, Path, RelicType, MultipliersInterface} from "../SharedTypes"
 
+//The stats is necessary becasue some effect such as element damage increase may not be applied finally
+//Context is necessary because some effect, such as the new ornament in 2.1 depends on teammate Context
 interface addEffect{
-    addEffectGlobal(stats:Stats, effectList:string[], effect:SpecialEffects): void;
-    addEffectFollowUp?(stats:Stats, effectList:string[], effect:SpecialEffectsLocal):void;
-    addEffectUltimate?(stats:Stats, effectList:string[], effect:SpecialEffectsLocal):void;
-    addEffectSkill?(stats:Stats, effectList:string[], effect:SpecialEffectsLocal):void;
-    addEffectBasicAttack?(stats:Stats, effectList:string[], effect:SpecialEffectsLocal):void;
+    addEffect(effect:AllTeamEffect, context:Context): void;
+    //addEffectGlobal(stats:Stats, effectList:string[], effect:SpecialEffects, context:Context): void;
+    //addEffectFollowUp?(stats:Stats, effectList:string[], effect:SpecialEffectsLocal, context:Context):void;
+    //addEffectUltimate?(stats:Stats, effectList:string[], effect:SpecialEffectsLocal, context:Context):void;
+    //addEffectSkill?(stats:Stats, effectList:string[], effect:SpecialEffectsLocal, context:Context):void;
+    //addEffectBasicAttack?(stats:Stats, effectList:string[], effect:SpecialEffectsLocal, context:Context):void;
 }
 
-interface addEffectTeam{
-    addTeamEffectGlobal?(stats:Stats, effectList:string[], effect:TeamSpecialEffects,): void;
-    addTeamEffectFollowUp?(stats:Stats, effectList:string[], effect:TeamSpecialEffectsLocal):void;
-    addTeamEffectUltimate?(stats:Stats, effectList:string[], effect:TeamSpecialEffectsLocal):void;
-    addTeamEffectSkill?(stats:Stats, effectList:string[], effect:TeamSpecialEffectsLocal):void;
-    addTeamEffectBasicAttack?(stats:Stats, effectList:string[], effect:TeamSpecialEffectsLocal):void;
-}
 
-//this should be constructed outside of the character 
-//this should keep track of all global effect
-
-//This class should be used for support characters
-//This Effects should be shared among the entire team.
-class TeamSpecialEffects{
-    boostMultiplierIncrease:number
-    vulnerabilityMultiplierIncrease:number
-    defReduction:number
-    resMultiplierIncrease:number
-    toughnessMultiplier:number
-    constructor(boostMultiplierIncrease:number = 0, vulnerabilityMultiplierIncrease:number = 0, defReduction:number = 0, resMultiplierIncrease:number = 0, toughnessMultiplier:number = 0.9){
-        this.boostMultiplierIncrease = boostMultiplierIncrease;
-        this.vulnerabilityMultiplierIncrease = vulnerabilityMultiplierIncrease;
-        this.defReduction = defReduction;
-        this.resMultiplierIncrease = resMultiplierIncrease;
-        this.toughnessMultiplier = toughnessMultiplier;
-    }
-}
-// Team specialeffectsLocal
-class TeamSpecialEffectsLocal{
-    boostMultiplierIncrease:number
-    vulnerabilityMultiplierIncrease:number
-    defReduction:number
-    resMultiplierIncrease:number
-    toughnessMultiplier:number
-    constructor(boostMultiplierIncrease:number = 0, vulnerabilityMultiplierIncrease:number = 0, defReduction:number = 0, resMultiplierIncrease:number = 0, toughnessMultiplier:number = 0.9){
-        this.boostMultiplierIncrease = boostMultiplierIncrease;
-        this.vulnerabilityMultiplierIncrease = vulnerabilityMultiplierIncrease;
-        this.defReduction = defReduction;
-        this.resMultiplierIncrease = resMultiplierIncrease;
-        this.toughnessMultiplier = toughnessMultiplier;
-    }
-}
 
 class SpecialEffects{
     boostMultiplierIncrease:number
@@ -66,7 +28,7 @@ class SpecialEffects{
         this.toughnessMultiplier = toughnessMultiplier;
     }
 }
-
+/*
 class SpecialEffectsLocal{
     boostMultiplierIncrease:number
     vulnerabilityMultiplierIncrease:number
@@ -81,8 +43,94 @@ class SpecialEffectsLocal{
         this.toughnessMultiplier = globalEffect.toughnessMultiplier;
     }
 }
+*/
+//The center of this architecture
+class StatsBoost {
+    hp: number;
+    attack: number;
+    defense: number;
+    speed: number;
+    criticalChance: number;
+    criticalDamage: number;
+    stanceBreakRatio: number;
+    healRatio: number;
+    spRatio: number;
+    statusProbability: number;
+    statusResistance: number;
+    physicalAddHurt: number;
+    fireAddHurt: number;
+    iceAddHurt: number;
+    elecAddHurt: number;
+    windAddHurt: number;
+    quantumAddHurt: number;
+    imaginaryAddHurt: number;
 
-//this should be constructed for each skill
+    constructor() {
+        this.hp = 0;
+        this.attack = 0;
+        this.defense = 0;
+        this.speed = 0;
+        this.criticalChance = 0;
+        this.criticalDamage = 0;
+        this.stanceBreakRatio = 0;
+        this.healRatio = 0;
+        this.spRatio = 0;
+        this.statusProbability = 0;
+        this.statusResistance = 0;
+        this.physicalAddHurt = 0;
+        this.fireAddHurt = 0;
+        this.iceAddHurt = 0;
+        this.elecAddHurt = 0;
+        this.windAddHurt = 0;
+        this.quantumAddHurt = 0;
+        this.imaginaryAddHurt = 0;
+    }
+}
+
+class EffectsWithNotes{
+    statsBoost:StatsBoost
+    effect:SpecialEffects
+    notes:string[]
+    constructor(){
+        this.statsBoost = new StatsBoost()
+        this.effect = new SpecialEffects();
+        this.notes = []
+    }
+}
+class SingleCharacterEffects{
+    globalEffect:EffectsWithNotes
+    followUpEffect:EffectsWithNotes
+    ultimateEffect:EffectsWithNotes
+    skillEffect:EffectsWithNotes
+    basicAttackEffect:EffectsWithNotes
+    constructor(){
+        this.globalEffect = new EffectsWithNotes()
+        this.followUpEffect = new EffectsWithNotes()
+        this.ultimateEffect = new EffectsWithNotes()
+        this.skillEffect = new EffectsWithNotes()
+        this.basicAttackEffect = new EffectsWithNotes()
+    }
+}
+
+class AllTeamEffect{
+    //This stores the effects unique to each character
+    characterEffect:Map<CharacterBriefInfo, SingleCharacterEffects>
+    //The key should be a pointer to each character for verifying if the characterEffect is effective
+    //This object should be unqiue fof the entire team
+    //These are the effect that applied to all team members
+    teamGlobalEffect:Map<CharacterBriefInfo, SingleCharacterEffects>
+
+    constructor(){
+        this.characterEffect = new Map();
+        this.teamGlobalEffect = new Map();
+    }
+
+}   
+
+//
+
+
+//This is used when constructing displayed text
 class Multipliers implements MultipliersInterface{
     attack:number;
     skillMultiplier:number;
@@ -93,8 +141,8 @@ class Multipliers implements MultipliersInterface{
     resMultiplier:number
     toughnessMultiplier:number
     targetCount:number
-
-    constructor(element:Element, stats:Stats, skillMultiplier:number, effects:SpecialEffectsLocal, level:number, targetCount:number, enemyLevel:number = 80){
+    //The effects should be an aggregated effects ready for final multiplier construction
+    constructor(element:Element, stats:Stats, skillMultiplier:number, effects:SpecialEffects, level:number, targetCount:number, enemyLevel:number = 80){
         this.attack = stats.attackFinal
         this.skillMultiplier = skillMultiplier;
         this.critMultiplier = 1+stats.criticalChance*stats.criticalDamage
@@ -107,7 +155,7 @@ class Multipliers implements MultipliersInterface{
     }
 
     public getDamage():number {
-        return this.attack*this.skillMultiplier * this.critMultiplier*this.boostMultiplier*this.defMultiplier*this.resMultiplier*this.vulnerabilityMultiplier*this.toughnessMultiplier
+        return this.attack*this.skillMultiplier * this.critMultiplier*this.boostMultiplier*this.defMultiplier*this.resMultiplier*this.vulnerabilityMultiplier*this.toughnessMultiplier*this.targetCount
     }
 }
 
@@ -129,5 +177,24 @@ function getElementDamage(element:Element, stats:Stats){
             return stats.physicalAddHurt
     }
 }
-export { SpecialEffects, Multipliers, SpecialEffectsLocal };
-export type { Element, Path, addEffect, RelicType };
+
+class Context{
+    stats:Stats
+    currentCharacter:CharacterBriefInfo
+    teammates:CharacterBriefInfo[]
+    constructor(stats:Stats, currentCharacter:CharacterBriefInfo, teammates:CharacterBriefInfo[]){
+        this.stats = stats
+        this.currentCharacter = currentCharacter
+        this.teammates = teammates
+    }
+}
+
+interface CharacterBriefInfo{
+    name: string;
+    path: Path;
+    element: Element;
+    level:number;
+}
+
+export { SpecialEffects, Multipliers, Context, AllTeamEffect, SingleCharacterEffects, EffectsWithNotes};
+export type { Element, Path, addEffect, RelicType, CharacterBriefInfo};

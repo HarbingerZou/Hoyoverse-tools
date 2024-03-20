@@ -1,4 +1,4 @@
-import {SpecialEffects} from "./CommonInterfaces"
+import {SpecialEffects, Context, AllTeamEffect, SingleCharacterEffects} from "./CommonInterfaces"
 import { Stats } from "../../../pages/api/JSONStructure";
 import { Info, Character, getCharacter} from "./CharacterFacory"
 import { Weapon, getWeapon } from "./WeaponFactory";
@@ -32,6 +32,12 @@ class CharacterInfo{
     }
 }
 
+//This is deprecated for version 2.1.
+//Unable to handle New planar ornaments well
+//Cumbersome perform ornament effect to read teammates path in potential future scnarios.
+//If relic/ornamnet effect is local, trigger chain would be character.local -> relic.local -> charcter.info && teammates.info
+//New solution, list of object for global and local effects for whole team,
+//where character, relic, weapon modify the comprehensive effect object
 function getDamageInfo({stats, rawCharacter, rawWeapon, relicList}:InputParams):CharacterInfo|undefined{
     stats = JSON.parse(JSON.stringify(stats));
     //console.log(rawCharacter)
@@ -48,32 +54,42 @@ function getDamageInfo({stats, rawCharacter, rawWeapon, relicList}:InputParams):
         return undefined
     }
 
-    const globalEffectList:string[] = [];
 
+    const context = new Context(stats,character,[])
 
-    const effect:SpecialEffects = new SpecialEffects();
-    //console.log(effect);
-    //console.log(globalEffectList);
-    if(weapon.path === character.path){
-        weapon.addEffectGlobal(stats, globalEffectList, effect);
-    }
-    //console.log(effect);
-    //console.log(globalEffectList);
-    character.addEffectGlobal(stats, globalEffectList, effect);
-    //console.log(effect);
-    //console.log(globalEffectList);
+    const currentCharacterEffect = new SingleCharacterEffects()
+    const effect:AllTeamEffect = new AllTeamEffect();
+
+    effect.characterEffect.set(character,currentCharacterEffect)
+    //console.log(effect.characterEffect.values().next())
+    weapon.addEffect(effect,context);
+    //console.log(effect.characterEffect.values().next())
+    character.addEffect(effect, context);
+    //console.log(effect.characterEffect.values().next())
 
     for(const relicSet of relicSets){
-        relicSet.addEffectGlobal(stats, globalEffectList, effect)
+        relicSet.addEffect(effect, context)
     }
+    const globalEffectList = getGlobalNotes(effect, context)
 
-    const info1:Info|undefined = character.getInfo1(stats, effect, weapon, relicSets);
-    const info2:Info|undefined = character.getInfo2(stats, effect, weapon, relicSets);
-    const info3:Info|undefined = character.getInfo3(stats, effect, weapon, relicSets);
+    const info1:Info|undefined = character.getInfo1(effect, context);
+    const info2:Info|undefined = character.getInfo2(effect, context);
+    const info3:Info|undefined = character.getInfo3(effect, context);
 
     const outputInfo:CharacterInfo = new CharacterInfo(globalEffectList, info1, info2, info3);
     disPlayInfo(outputInfo);
     return outputInfo;
+}
+
+
+function getGlobalNotes(effect:AllTeamEffect, context:Context):string[]{
+    const currentCharacter = context.currentCharacter
+    const currentCharacterEffect = effect.characterEffect.get(currentCharacter)
+    if(currentCharacterEffect===undefined){
+        return []
+    }
+
+    return currentCharacterEffect.globalEffect.notes
 }
 
 function disPlayInfo(characterInfo:CharacterInfo){

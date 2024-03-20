@@ -1,4 +1,4 @@
-import { addEffect, SpecialEffects, Multipliers, Path} from "./CommonInterfaces"
+import { addEffect, SpecialEffects, Multipliers, Path, Context, AllTeamEffect} from "./CommonInterfaces"
 import { RawWeapon } from "../../../pages/api/JSONStructure";
 import { Stats } from "../../../pages/api/JSONStructure";
 interface Weapon extends addEffect{
@@ -8,27 +8,40 @@ interface Weapon extends addEffect{
     promotion:number;
     rankLevel: number;
 }
-
-
-class brighter_than_the_sun implements Weapon{
-    name: string;
-    path: Path;
-    level: number;
-    promotion: number;
+class Weapon implements Weapon{
+    name:string;
+    path:Path;
+    level:number;
+    promotion:number;
     rankLevel: number;
-    damageBoost: number;
-    constructor(level: number, promotion: number, rankLevel: number) {
-        this.name = "Brighter Than the Sun";
-        this.path = "destruction";
+    constructor(name:string, path:Path, level: number, promotion: number, rankLevel: number) {
+        this.name = name
+        this.path = path
         this.level = level;
         this.promotion = promotion;
         this.rankLevel = rankLevel;
-        this.damageBoost = 0;
     }
+    isEffective(context:Context):boolean {
+        return context.currentCharacter.path === this.path;
+    }
+}
 
-    addEffectGlobal(stats: Stats, effectList:string[], effect:SpecialEffects): void {
-        stats.attackFinal += 0.36*stats.attackBase;
-        effectList.push("Defiant Till Death: Increases the wearer's Attack by 36%");
+class brighter_than_the_sun extends Weapon{
+    constructor(level: number, promotion: number, rankLevel: number) {
+        const name = "Brighter Than the Sun";
+        const path = "destruction";
+        super(name,path,level,promotion,rankLevel)
+    }
+    addEffect(effect: AllTeamEffect, context: Context): void {
+        if(this.isEffective(context)){
+            const currentCharacter = context.currentCharacter
+            const currentCharacterEffect = effect.characterEffect.get(currentCharacter)
+            if(currentCharacterEffect === undefined){
+                return
+            }
+            currentCharacterEffect.globalEffect.statsBoost.attack += 0.36*context.stats.attackBase
+            currentCharacterEffect.globalEffect.notes.push("Defiant Till Death: Increases the wearer's Attack by 36%")
+        }
     }
 }
 

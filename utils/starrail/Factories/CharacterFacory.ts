@@ -1,8 +1,9 @@
-import { Element, Path, SpecialEffects,addEffect,Multipliers, SpecialEffectsLocal} from "./CommonInterfaces"
+import { Element, Path, SpecialEffects,addEffect,Multipliers, CharacterBriefInfo, Context, AllTeamEffect, EffectsWithNotes} from "./CommonInterfaces"
 import { Weapon } from "./WeaponFactory";
 //just to store passed in Json
 import { RawCharacter, Stats } from "../../../pages/api/JSONStructure";
 import { RelicSet } from "./RelicFactory";
+
 //notes for each skill
 class Info{
     name:string;
@@ -19,7 +20,7 @@ class Info{
     }
 }
 
-abstract class Character<TBasic, TSkill, TUltimate, TTalent> implements addEffect{
+abstract class Character<TBasic, TSkill, TUltimate, TTalent> implements addEffect,CharacterBriefInfo{
     name: string;
     path: Path;
     element: Element;
@@ -66,56 +67,19 @@ abstract class Character<TBasic, TSkill, TUltimate, TTalent> implements addEffec
         this.talent_data = talent_data
     }
 
-    abstract addEffectGlobal(stats: Stats, effectList: string[], effect: SpecialEffects): void 
+    //add the effect of passive, eidolon. etc
+    addEffect(effect: AllTeamEffect, context: Context): void {
+        throw new Error("Method not implemented.");
+    }
+
 
     //can be modified to trigger team members effects
-    abstract getInfo1(stats:Stats, effect: SpecialEffects, weapon:Weapon, relicSets: RelicSet[]):Info|undefined;
-    abstract getInfo2(stats:Stats, effect: SpecialEffects, weapon:Weapon, relicSets: RelicSet[]):Info|undefined;
-    abstract getInfo3(stats:Stats, effect: SpecialEffects, weapon:Weapon, relicSets: RelicSet[]):Info|undefined;
+    abstract getInfo1(effect:AllTeamEffect, context:Context):Info|undefined;
+    abstract getInfo2(effect:AllTeamEffect, context:Context):Info|undefined;
+    abstract getInfo3(effect:AllTeamEffect, context:Context):Info|undefined;
+    //abstract getInfo2(stats:Stats, effect: SpecialEffects, weapon:Weapon, relicSets: RelicSet[], context:Context):Info|undefined;
+    //abstract getInfo3(stats:Stats, effect: SpecialEffects, weapon:Weapon, relicSets: RelicSet[], context:Context):Info|undefined;
 
-
-    addWeaponRelicEffectBasicAttack(weapon:Weapon|undefined, relicSets:RelicSet[], statsLocal:Stats, effectList:string[], effectLocal:SpecialEffectsLocal):void{
-        if(weapon!== undefined && typeof weapon.addEffectBasicAttack === "function" && weapon.path === this.path){
-            weapon.addEffectBasicAttack(statsLocal, effectList, effectLocal);
-        }
-        for(const relicSet of relicSets){
-            if(typeof relicSet.addEffectBasicAttack === "function"){
-                relicSet.addEffectBasicAttack(statsLocal, effectList, effectLocal);
-            }
-        }
-    }
-    addWeaponRelicEffectFollowUp(weapon:Weapon|undefined, relicSets:RelicSet[], statsLocal:Stats, effectList:string[], effectLocal:SpecialEffectsLocal):void{
-        if(weapon!== undefined && typeof weapon.addEffectFollowUp === "function" && weapon.path === this.path){
-            weapon.addEffectFollowUp(statsLocal, effectList, effectLocal);
-        }
-        for(const relicSet of relicSets){
-            if(typeof relicSet.addEffectFollowUp === "function"){
-                relicSet.addEffectFollowUp(statsLocal, effectList, effectLocal);
-            }
-        }
-    }
-
-    addWeaponRelicEffectSkill(weapon:Weapon|undefined, relicSets:RelicSet[], statsLocal:Stats, effectList:string[], effectLocal:SpecialEffectsLocal):void{
-        if(weapon!== undefined && typeof weapon.addEffectSkill === "function" && weapon.path === this.path){
-            weapon.addEffectSkill(statsLocal, effectList, effectLocal);
-        }
-        for(const relicSet of relicSets){
-            if(typeof relicSet.addEffectSkill === "function"){
-                relicSet.addEffectSkill(statsLocal, effectList, effectLocal);
-            }
-        }
-    }
-
-    addWeaponRelicEffectUltimate(weapon:Weapon|undefined, relicSets:RelicSet[], statsLocal:Stats, effectList:string[], effectLocal:SpecialEffectsLocal):void{
-        if(weapon!== undefined && typeof weapon.addEffectUltimate === "function" && weapon.path === this.path){
-            weapon.addEffectUltimate(statsLocal, effectList, effectLocal);
-        }
-        for(const relicSet of relicSets){
-            if(typeof relicSet.addEffectUltimate === "function"){
-                relicSet.addEffectUltimate(statsLocal, effectList, effectLocal);
-            }
-        }
-    }
 }
 
 class Dan_Heng_IL extends Character<number[][], number[], number[], number[]> {
@@ -139,32 +103,33 @@ class Dan_Heng_IL extends Character<number[][], number[], number[], number[]> {
            ) 
     }
     
-
-
-    addEffectGlobal(stats: Stats, effectList:string[]): void {
-        if(this.trace3){
-            stats.criticalDamage += 0.24;
-            effectList.push("Jolt Anew: This character's CRIT DMG increases by 24% when dealing DMG to enemy targets with Imaginary Weakness.");
+    addEffect(effect: AllTeamEffect, context: Context): void {
+        const currentCharacter = context.currentCharacter
+        const currentCharacterEffect = effect.characterEffect.get(currentCharacter)
+        if(currentCharacterEffect === undefined){
+            return
         }
+        if(this.trace3){
+            currentCharacterEffect.globalEffect.statsBoost.criticalDamage += 0.24
+            currentCharacterEffect.globalEffect.notes.push("Jolt Anew: This character's CRIT DMG increases by 24% when dealing DMG to enemy targets with Imaginary Weakness.");
+        }
+
+        const criticalDamageIncrease:number = 2.2*this.skill_data[this.skill_level-1];
+        currentCharacterEffect.basicAttackEffect.statsBoost.criticalDamage += criticalDamageIncrease
+        currentCharacterEffect.basicAttackEffect.notes.push(`Dracore Libre: CRIT DMG increase by ${criticalDamageIncrease*100}%`)
+        
+        currentCharacterEffect.basicAttackEffect.effect.boostMultiplierIncrease += 0.3;
+        currentCharacterEffect.basicAttackEffect.notes.push(`Righteous Heart: Damage increase by 30%`)
     }
 
-    getInfo1(stats:Stats, effect:SpecialEffects, weapon:Weapon|undefined, relicSets:RelicSet[]): Info {
-        const effectList:string[] = []
+    getInfo1(effect:AllTeamEffect, context:Context): Info {
+        const effectList:string[] = getSkillNotes(effect,context,"basic attack")
         //construct the multiplier for this skill
         
-        const statsLocal:Stats = JSON.parse(JSON.stringify(stats));
+        const statsLocal = combineStats(effect,context,"basic attack")
 
         //add weapon local effect
-        const effectLocal:SpecialEffectsLocal = new SpecialEffectsLocal(effect);
-        
-        this.addWeaponRelicEffectBasicAttack(weapon, relicSets, statsLocal,effectList,effectLocal)
-        //add charactrer local effect
-        const criticalDamageIncrease:number = 2.2*this.skill_data[this.skill_level-1];
-        statsLocal.criticalDamage += criticalDamageIncrease;
-        effectList.push(`Dracore Libre: CRIT DMG increase by ${criticalDamageIncrease*100}%`)
-        effectLocal.boostMultiplierIncrease += 0.3;
-        effectList.push(`Righteous Heart: Damage increase by 30%`)
-   
+        const effectLocal:SpecialEffects = combineEffect(effect,context,"basic attack")
         
         const multipliers:Multipliers = new Multipliers(this.element, statsLocal, this.basic_data[this.basic_level-1][0], effectLocal, this.level, 1.32)
         
@@ -173,12 +138,123 @@ class Dan_Heng_IL extends Character<number[][], number[], number[], number[]> {
         return info
     }
 
-    getInfo2(stats:Stats): Info | undefined{
+    getInfo2(effect:AllTeamEffect, context:Context): Info | undefined{
         return undefined;
     }
-    getInfo3(stats:Stats): Info | undefined{
+    getInfo3(effect:AllTeamEffect, context:Context): Info | undefined{
         return undefined;
     }
+}
+
+type damageType = "basic attack" | "skill" | "ultimate" | "follow up"
+
+
+function getAllEffects(effect:AllTeamEffect, context:Context, tag:damageType):EffectsWithNotes[]{
+    const currentCharacter = context.currentCharacter
+    const currentCharacterEffect = effect.characterEffect.get(currentCharacter)
+    const effectsToAdd:EffectsWithNotes[] = []
+    if(currentCharacterEffect === undefined){
+        new Error("current character effect doesn't exist.");
+        return effectsToAdd
+    }
+    let localEffect = currentCharacterEffect.basicAttackEffect
+    if(tag === "skill"){
+        localEffect = currentCharacterEffect.skillEffect
+    }
+    if(tag === "ultimate"){
+        localEffect = currentCharacterEffect.ultimateEffect
+    }
+    if(tag === "follow up"){
+        localEffect = currentCharacterEffect.followUpEffect
+    }
+    effectsToAdd.push(currentCharacterEffect.globalEffect)
+    effectsToAdd.push(localEffect)
+
+
+    //console.log(effect.characterEffect)
+    //console.log(effect.teamGlobalEffect)
+    for(const teammateEffect of effect.teamGlobalEffect.values()){
+        let teammateEffectLocal = teammateEffect.basicAttackEffect
+        if(tag === "skill"){
+            teammateEffectLocal = currentCharacterEffect.skillEffect
+        }
+        if(tag === "ultimate"){
+            teammateEffectLocal = currentCharacterEffect.ultimateEffect
+        }
+        if(tag === "follow up"){
+            teammateEffectLocal = currentCharacterEffect.followUpEffect
+        }
+        effectsToAdd.push(teammateEffectLocal)
+        effectsToAdd.push(teammateEffect.globalEffect)
+    }
+
+    return effectsToAdd
+}
+
+function getSkillNotes(effect:AllTeamEffect, context:Context, tag:damageType):string[]{
+    const currentCharacter = context.currentCharacter
+    const currentCharacterEffect = effect.characterEffect.get(currentCharacter)
+    if(currentCharacterEffect===undefined){
+        return []
+    }
+
+    let notes:string[] = []
+    if(tag === "basic attack"){
+        notes = currentCharacterEffect.basicAttackEffect.notes
+    }
+    if(tag === "skill"){
+        notes = currentCharacterEffect.skillEffect.notes
+    }
+    if(tag === "ultimate"){
+        notes = currentCharacterEffect.ultimateEffect.notes
+    }
+    if(tag === "follow up"){
+        notes = currentCharacterEffect.followUpEffect.notes
+    }
+    return notes;
+}
+
+function combineEffect(effect:AllTeamEffect, context:Context, tag:damageType):SpecialEffects{
+    const effectCombined = new SpecialEffects()
+    const effectsToAdd = getAllEffects(effect,context,tag)
+    //console.log(effectCombined)
+    for(const effect of effectsToAdd){
+        effectCombined.boostMultiplierIncrease += effect.effect.boostMultiplierIncrease
+        effectCombined.defReduction += effect.effect.defReduction
+        effectCombined.resMultiplierIncrease += effect.effect.resMultiplierIncrease
+        effectCombined.toughnessMultiplierIncrease += effect.effect.toughnessMultiplierIncrease
+        effectCombined.vulnerabilityMultiplierIncrease += effect.effect.vulnerabilityMultiplierIncrease
+       // console.log(effectCombined)
+    }
+    return effectCombined
+}   
+function combineStats(effect:AllTeamEffect, context:Context, tag:damageType):Stats{
+    //construct local copy of the base effect
+    const stats = JSON.parse(JSON.stringify(context.stats));
+    const effectsToAdd = getAllEffects(effect,context,tag)
+    for(const effect of effectsToAdd){
+        stats.attackFinal += effect.statsBoost.attack
+        stats.defenseFinal += effect.statsBoost.defense
+        stats.hpFinal += effect.statsBoost.hp
+        stats.speedFinal += effect.statsBoost.speed
+        stats.criticalChance += effect.statsBoost.criticalChance
+        stats.criticalDamage += effect.statsBoost.criticalDamage
+
+        stats.healRatio += effect.statsBoost.healRatio
+        stats.stanceBreakRatio += effect.statsBoost.stanceBreakRatio
+        stats.statusResistance += effect.statsBoost.statusResistance
+        stats.statusProbability += effect.statsBoost.statusProbability
+        stats.spRatio += effect.statsBoost.spRatio
+
+        stats.elecAddHurt += effect.statsBoost.elecAddHurt
+        stats.fireAddHurt += effect.statsBoost.fireAddHurt
+        stats.iceAddHurt += effect.statsBoost.iceAddHurt
+        stats.imaginaryAddHurt += effect.statsBoost.imaginaryAddHurt
+        stats.windAddHurt += effect.statsBoost.windAddHurt
+        stats.physicalAddHurt += effect.statsBoost.physicalAddHurt
+        stats.quantumAddHurt += effect.statsBoost.quantumAddHurt
+    }
+    return stats
 }
 
 function getCharacter(characterInfo:RawCharacter) : Character<any[], any[], any[], any[]>| undefined{

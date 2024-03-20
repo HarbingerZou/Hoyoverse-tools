@@ -1,4 +1,4 @@
-import { Multipliers, SpecialEffects, SpecialEffectsLocal, addEffect } from "./CommonInterfaces";
+import { AllTeamEffect, Context, Multipliers, SpecialEffects, addEffect } from "./CommonInterfaces";
 import { Stats } from "../../../pages/api/JSONStructure";
 interface Affix{
     type:string,
@@ -36,13 +36,18 @@ class Wastelander_of_Banditry_Desert implements RelicSet{
         this.count = count;
         this.setName = "Wastelander of Banditry Desert"
     }
-    addEffectGlobal(stats: Stats, effectList: string[], effect: SpecialEffects): void {
-        if(this.count >= 4){
-            stats.criticalChance += 0.1
-            stats.criticalDamage += 0.2
-            effectList.push("Wastelander of Banditry Desert: When attacking debuffed enemies, the wearer's CRIT Rate increases by 10%, and their CRIT DMG increases by 20% against Imprisoned enemies.")
+    addEffect(effect: AllTeamEffect, context: Context): void {
+        const currentCharacter = context.currentCharacter
+        const currentCharacterEffect = effect.characterEffect.get(currentCharacter)
+        if(currentCharacterEffect === undefined){
+            return
         }
-    }  
+
+        currentCharacterEffect.globalEffect.statsBoost.criticalChance += 0.1
+        currentCharacterEffect.globalEffect.statsBoost.criticalDamage += 0.2
+        currentCharacterEffect.globalEffect.notes.push("Wastelander of Banditry Desert: When attacking debuffed enemies, the wearer's CRIT Rate increases by 10%, and their CRIT DMG increases by 20% against Imprisoned enemies.")
+
+    }
 }
 
 class Rutilant_Arena implements RelicSet{
@@ -52,19 +57,17 @@ class Rutilant_Arena implements RelicSet{
         this.count = count;
         this.setName = "Rutilant Arena"
     }
-    addEffectGlobal(stats: Stats, effectList: string[], effect: SpecialEffects): void {
-        
-    }
-    addEffectBasicAttack(stats: Stats, effectList: string[], effect: SpecialEffectsLocal): void {
-        if(stats.criticalChance >= 0.7){
-            effect.boostMultiplierIncrease += 0.2;
-            effectList.push("Rutilant Arena: When the wearer's current CRIT Rate reaches 70% or higher, the wearer's Basic ATK and Skill DMG increase by 20%.")
+    addEffect(effect: AllTeamEffect, context: Context): void {
+        const currentCharacter = context.currentCharacter
+        const currentCharacterEffect = effect.characterEffect.get(currentCharacter)
+        if(currentCharacterEffect === undefined){
+            return
         }
-    }
-    addEffectSkill(stats: Stats, effectList: string[], effect: SpecialEffectsLocal): void {
-        if(stats.criticalChance>=0.7){
-            effect.boostMultiplierIncrease += 0.2;
-            effectList.push("Rutilant Arena: When the wearer's current CRIT Rate reaches 70% or higher, the wearer's Basic ATK and Skill DMG increase by 20%.")
+        if(context.stats.criticalChance>=0.7){
+            currentCharacterEffect.basicAttackEffect.effect.boostMultiplierIncrease += 0.2
+            currentCharacterEffect.basicAttackEffect.notes.push("Rutilant Arena: When the wearer's current CRIT Rate reaches 70% or higher, the wearer's Basic ATK and Skill DMG increase by 20%.")
+            currentCharacterEffect.skillEffect.effect.boostMultiplierIncrease += 0.2     
+            currentCharacterEffect.skillEffect.notes.push("Rutilant Arena: When the wearer's current CRIT Rate reaches 70% or higher, the wearer's Basic ATK and Skill DMG increase by 20%.")
         }
     }
 }
