@@ -1,5 +1,6 @@
+//This file includes all necessary common interfaces for backend
 import { Stats } from "../../../pages/api/JSONStructure";
-import  { Element, Path, RelicType, MultipliersInterface} from "../SharedTypes"
+import  { Element, MultipliersInterface, CharacterBriefInfo} from "../SharedTypes"
 
 //The stats is necessary becasue some effect such as element damage increase may not be applied finally
 //Context is necessary because some effect, such as the new ornament in 2.1 depends on teammate Context
@@ -19,13 +20,13 @@ class SpecialEffects{
     vulnerabilityMultiplierIncrease:number
     defReduction:number
     resMultiplierIncrease:number
-    toughnessMultiplier:number
-    constructor(boostMultiplierIncrease:number = 0, vulnerabilityMultiplierIncrease:number = 0, defReduction:number = 0, resMultiplierIncrease:number = 0, toughnessMultiplier:number = 0.9){
+    toughnessMultiplierIncrease:number
+    constructor(boostMultiplierIncrease:number = 0, vulnerabilityMultiplierIncrease:number = 0, defReduction:number = 0, resMultiplierIncrease:number = 0, toughnessMultiplierIncrease:number = 0){
         this.boostMultiplierIncrease = boostMultiplierIncrease;
         this.vulnerabilityMultiplierIncrease = vulnerabilityMultiplierIncrease;
         this.defReduction = defReduction;
         this.resMultiplierIncrease = resMultiplierIncrease;
-        this.toughnessMultiplier = toughnessMultiplier;
+        this.toughnessMultiplierIncrease = toughnessMultiplierIncrease;
     }
 }
 /*
@@ -150,7 +151,7 @@ class Multipliers implements MultipliersInterface{
         this.vulnerabilityMultiplier = effects.vulnerabilityMultiplierIncrease+1;
         this.defMultiplier = (level+20)/((enemyLevel+20)*(1-effects.defReduction) + level + 20)
         this.resMultiplier = effects.resMultiplierIncrease+1;
-        this.toughnessMultiplier = effects.toughnessMultiplier;
+        this.toughnessMultiplier = 0.9+effects.toughnessMultiplierIncrease;
         this.targetCount = targetCount
     }
 
@@ -189,12 +190,6 @@ class Context{
     }
 }
 
-interface CharacterBriefInfo{
-    name: string;
-    path: Path;
-    element: Element;
-    level:number;
-}
 
 export { SpecialEffects, Multipliers, Context, AllTeamEffect, SingleCharacterEffects, EffectsWithNotes};
-export type { Element, Path, addEffect, RelicType, CharacterBriefInfo};
+export type { addEffect};

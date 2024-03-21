@@ -1,4 +1,6 @@
-import { RelicType, Element } from "../../utils/starrail/Factories/CommonInterfaces";
+//This file specify JSON structure of object from outside api
+import { RelicType, Element } from "../../utils/starrail/SharedTypes";
+
 interface AvatarConfig{
     id:number,
     name:string,
@@ -78,6 +80,8 @@ interface Factors {
     "Break Effect": number; 
     Speed: number; 
 }
+
+
 interface RawWeapon{
     id:number;
     level:number;

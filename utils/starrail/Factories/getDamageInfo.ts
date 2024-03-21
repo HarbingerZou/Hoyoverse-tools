@@ -77,7 +77,7 @@ function getDamageInfo({stats, rawCharacter, rawWeapon, relicList}:InputParams):
     const info3:Info|undefined = character.getInfo3(effect, context);
 
     const outputInfo:CharacterInfo = new CharacterInfo(globalEffectList, info1, info2, info3);
-    disPlayInfo(outputInfo);
+    //disPlayInfo(outputInfo);
     return outputInfo;
 }
 

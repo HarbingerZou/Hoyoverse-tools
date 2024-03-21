@@ -1,10 +1,45 @@
 //This file define the common protocol between frontend and backend
+//These types should be shared between frontend and backend
 type Element = "elec" | "imaginary" | "wind"|"fire"| "ice" | "quantum" | "physical"
 type Path =  "destruction" | "hunt" | "erudition" | "harmony" | "nihility" | "perservation" | "abundance"
 type RelicType = "HEAD" | "HAND" | "BODY" |"FOOT" | "NECK" |"OBJECT"
-type Stat = "ATK"| "DEF" | "HP" | "ATK%"| "DEF%" | "HP%" |
-     "Speed" | "CRIT Rate" | "CRIT DMG" | "Effect Hit Rate" | "Effect RES" | "Break Effect" | "Energy Regen Rate"| "Outgoing Healing" |
+
+type MainStatType = "ATK"| "HP" | "ATK%"| "DEF%" | "HP%" |
+     "Speed" | "CRIT Rate" | "CRIT DMG" | "Effect HIT Rate" | "Break Effect" | "Energy Regen Rate"| "Outgoing Healing" |
      "Fire DMG"| "Ice DMG"| "Physical DMG"| "Wind DMG"| "Quantum DMG"| "Imaginary DMG"| "Lightning DMG"
+
+type SubStatType = "ATK"| "DEF" | "HP" | "ATK%"| "DEF%" | "HP%" |
+"Speed" | "CRIT Rate" | "CRIT DMG" | "Effect HIT Rate" | "Effect RES" | "Break Effect"
+
+interface AffixInterface{
+    type:MainStatType,
+    value:number,
+}
+
+interface subAffixInterface{
+    type:SubStatType,
+    count:number
+    value:number,
+}
+    
+interface RelicInterface{
+    level:number;
+    type:string;
+    setID:number
+    setName:string;
+    rarity:number;
+    mainAffix:AffixInterface;
+    subAffix:subAffixInterface[];
+}
+
+interface WeaponInterface {
+    name:string;
+    path:Path;
+    level:number;
+    promotion:number;
+    rankLevel: number;
+}
+
 interface MultipliersInterface{
     attack:number;
     skillMultiplier:number;
@@ -17,4 +52,11 @@ interface MultipliersInterface{
     targetCount:number
 }
 
-export type { Element, Path, Stat, RelicType, MultipliersInterface};
+interface CharacterBriefInfo{
+    name: string;
+    path: Path;
+    element: Element;
+    level:number;
+}
+
+export type { Element, Path, MainStatType, SubStatType, RelicType, MultipliersInterface, RelicInterface, AffixInterface, subAffixInterface, WeaponInterface, CharacterBriefInfo};

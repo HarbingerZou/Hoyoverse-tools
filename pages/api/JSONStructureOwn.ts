@@ -2,38 +2,47 @@ import { Stats } from './JSONStructure';
 import { RawCharacter } from './JSONStructure';
 import { RawWeapon } from './JSONStructure';
 import { Factors } from './JSONStructure';
-import { Element } from '../../utils/starrail/Factories/CommonInterfaces';
-import { Affix , Relic } from '../../utils/starrail/Factories/RelicFactory';
 import { CharacterInfo } from '../../utils/starrail/Factories/getDamageInfo';
-import { Stat } from '../../utils/starrail/SharedTypes';
+import { AffixInterface, subAffixInterface, RelicInterface, Element, RelicType } from '../../utils/starrail/SharedTypes';
 
-interface ForMattedAffix extends Affix{
-    type:Stat,
-    value:number,
-    valueString:string
-}
 
-interface ForMattedSubAffix extends ForMattedAffix{
-    type:Stat,
-    count:number,
-    value:number,
-    valueString:string
-}
-
-class FormattedRelic extends Relic{
-    level!: number;
-    type!: string;
-    setID!: number;
-    setName!: string;
-    rarity!: number;
+class FormattedRelic implements RelicInterface{
+    level: number;
+    type: RelicType;
+    setID: number;
+    setName: string;
+    rarity: number;
+    mainAffix: AffixInterface;
+    subAffix: subAffixInterface[];
     score:number|undefined;
     rate:string|undefined;
-    mainAffix!: ForMattedAffix;
-    subAffix!: ForMattedSubAffix[];
-    constructor(level:number, type:string, setID:number,  set:string, rarity:number, mainAffix:ForMattedAffix){
-        super(level, type, setID, set, rarity, mainAffix)
-        this.score = undefined;
-        this.rate = undefined;
+    constructor(level:number, type:RelicType, setID:number,  set:string, rarity:number,
+         mainAffix:AffixInterface, subAffix:subAffixInterface[] = [],
+          score:number|undefined = undefined, rate:string|undefined = undefined){
+        this.level = level
+        this.type = type
+        this.setID = setID
+        this.setName = set
+        this.rarity = rarity
+        this.mainAffix = mainAffix
+        this.subAffix = subAffix
+        this.score = score;
+        this.rate = rate;
+    }
+
+    //This function is used for the frontend to reconstruct the prototype chain
+    static fromObject(formattedRelic:FormattedRelic):FormattedRelic{
+        const level = formattedRelic.level
+        const type = formattedRelic.type
+        const setID = formattedRelic.setID
+        const setName = formattedRelic.setName
+        const rarity = formattedRelic.rarity
+        const mainAffix = formattedRelic.mainAffix
+        const subAffix = formattedRelic.subAffix
+        const score = formattedRelic.score
+        const rate = formattedRelic.rate
+        return new FormattedRelic(level, type, setID, setName, rarity, mainAffix, subAffix, score, rate)
+
     }
 }
 
@@ -99,4 +108,3 @@ class UserInfo{
 }
 
 export { FormattedRelic, CharacterWithStats, UserInfo };
-export type { ForMattedAffix , ForMattedSubAffix};

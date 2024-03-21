@@ -72,10 +72,9 @@ export default function userInfo(){
 };
 
 function User({userInfo}:{userInfo:UserInfo}){
+    //console.log(userInfo);
     const avatars = userInfo.avatars;
     const [avatarShown,setAvatarShown] = useState(avatars[0]);
-
-    //console.log(userInfo);
     //avatarShown.weights can be undefined if the avatar doesn't have any relics.
     const formula = avatarShown===undefined || avatarShown.weights === undefined? <></>: <FormluaArea character={avatarShown} userInfo = {userInfo}/>
     const characters = avatarShown===undefined?
@@ -127,9 +126,10 @@ function SingleCharacter({character}:{character:CharacterWithStats}){
 
             </div>
             <div className="grid grid-cols-3">  
-                {character.relics.map((relic,index) =>
-                    <RelicView relic={relic}/>
-                )}
+                {character.relics.map((relic,index) => {
+                    relic = FormattedRelic.fromObject(relic)
+                    return <RelicView relic={relic}/>
+                })}
             </div>
             <InfoBoxArea character={character}/>
         </div>

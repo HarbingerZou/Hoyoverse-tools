@@ -1,14 +1,8 @@
 import { addEffect, SpecialEffects, Multipliers, Path, Context, AllTeamEffect} from "./CommonInterfaces"
 import { RawWeapon } from "../../../pages/api/JSONStructure";
-import { Stats } from "../../../pages/api/JSONStructure";
-interface Weapon extends addEffect{
-    name:string;
-    path:Path;
-    level:number;
-    promotion:number;
-    rankLevel: number;
-}
-class Weapon implements Weapon{
+import { WeaponInterface } from "../SharedTypes";
+
+class Weapon implements WeaponInterface, addEffect{
     name:string;
     path:Path;
     level:number;
@@ -20,6 +14,9 @@ class Weapon implements Weapon{
         this.level = level;
         this.promotion = promotion;
         this.rankLevel = rankLevel;
+    }
+    addEffect(effect: AllTeamEffect, context: Context): void {
+        throw new Error("Method not implemented.");
     }
     isEffective(context:Context):boolean {
         return context.currentCharacter.path === this.path;

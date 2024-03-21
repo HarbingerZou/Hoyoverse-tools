@@ -1,5 +1,5 @@
-import { Element, RelicType } from "./starrail/Factories/CommonInterfaces";
-import { Stat } from "./starrail/SharedTypes";
+import { Element, RelicType } from "./starrail/SharedTypes";
+import { MainStatType, SubStatType } from "./starrail/SharedTypes";
 function elementMapper(element:Element):string{
     switch (element) {
         case "elec":
@@ -41,11 +41,12 @@ function parseType(type:RelicType):string{
     
 }
 
-function parseStat(stat:Stat):string{
+//This method helps parse the stats to the correct filename for relic view stat icon display
+function parseStat(stat:MainStatType|SubStatType):string{
     return stat.replace("%","")
 }
 
-function parseValue(value:number, type:Stat):string{
+function parseValue(value:number, type:MainStatType|SubStatType):string{
     let valueString
     if(value < 1){
         valueString = (Math.floor(value*1000)/10).toString()+"%";

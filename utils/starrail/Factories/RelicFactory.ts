@@ -1,19 +1,16 @@
-import { AllTeamEffect, Context, Multipliers, SpecialEffects, addEffect } from "./CommonInterfaces";
-import { Stats } from "../../../pages/api/JSONStructure";
-interface Affix{
-    type:string,
-    value:number,
-}
+import { AllTeamEffect, Context, addEffect } from "./CommonInterfaces";
+import { AffixInterface, subAffixInterface, RelicInterface, RelicType } from "../SharedTypes";
 
-class Relic{
+
+class Relic implements RelicInterface{
     level:number;
-    type:string;
+    type:RelicType;
     setID:number
     setName:string;
     rarity:number;
-    mainAffix:Affix;
-    subAffix:Affix[];
-    constructor(level:number, type:string, setID:number,  setName:string, rarity:number, mainAffix:Affix){
+    mainAffix:AffixInterface;
+    subAffix:subAffixInterface[];
+    constructor(level:number, type:RelicType, setID:number,  setName:string, rarity:number, mainAffix:AffixInterface){
         this.level = level;
         this.type = type;
         this.setName = setName;
@@ -100,4 +97,4 @@ function getRelicSetList(relicList:Relic[]):RelicSet[]{
 }
 
 export { Relic, getRelicSetList };
-export type { Affix, RelicSet };
+export type { RelicSet };

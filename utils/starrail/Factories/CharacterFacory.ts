@@ -1,9 +1,8 @@
-import { Element, Path, SpecialEffects,addEffect,Multipliers, CharacterBriefInfo, Context, AllTeamEffect, EffectsWithNotes} from "./CommonInterfaces"
-import { Weapon } from "./WeaponFactory";
+import { SpecialEffects,addEffect,Multipliers, Context, AllTeamEffect, EffectsWithNotes} from "./CommonInterfaces"
 //just to store passed in Json
 import { RawCharacter, Stats } from "../../../pages/api/JSONStructure";
-import { RelicSet } from "./RelicFactory";
 
+import { Element, Path, CharacterBriefInfo } from "../SharedTypes";
 //notes for each skill
 class Info{
     name:string;
