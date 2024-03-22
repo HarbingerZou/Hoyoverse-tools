@@ -1,12 +1,12 @@
 import { Schema, model, models } from 'mongoose';
-import conn from '../../utils/ConnectStarRailConfig';
+import {ConfigConnection} from '../../utils/ConnectDatabase';
 const AffixConfigSchema = new Schema({
     
 }); 
 
 
 
-const StarRailDB = conn;
+const StarRailDB = ConfigConnection;
 
 const Affix_config = StarRailDB.models?.affix_config || StarRailDB.model('affix_config', AffixConfigSchema);
 

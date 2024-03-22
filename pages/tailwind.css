@@ -3,7 +3,8 @@
 @tailwind utilities;
 
 html {
-    font-size: 1.2vw; /* 1/50th of the viewport width */
+    font-size:calc(4px + 1vw);
+	
 }
 
 @media (max-width: 600px) {

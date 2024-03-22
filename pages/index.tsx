@@ -125,7 +125,7 @@ function SingleCharacter({character}:{character:CharacterWithStats}){
                 <StatsBox character={character} />
 
             </div>
-            <div className="grid grid-cols-3">  
+            <div className="grid grid-flow-row auto-rows-max sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">  
                 {character.relics.map((relic,index) => {
                     relic = FormattedRelic.fromObject(relic)
                     return <RelicView relic={relic}/>

@@ -1,5 +1,7 @@
 import { Element, RelicType } from "./starrail/SharedTypes";
 import { MainStatType, SubStatType } from "./starrail/SharedTypes";
+
+//help the display of Stats name in frontend
 function elementMapper(element:Element):string{
     switch (element) {
         case "elec":

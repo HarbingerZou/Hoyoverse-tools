@@ -1,5 +1,5 @@
 import { Schema, model, models } from 'mongoose';
-import conn from '../../utils/ConnectStarRailConfig';
+import {ConfigConnection} from '../../utils/ConnectDatabase';
 
 const AvatarConfigSchema = new Schema({
     id:Number,
@@ -8,7 +8,7 @@ const AvatarConfigSchema = new Schema({
     path:Number,
 }); 
 
-const StarRailDB = conn;
+const StarRailDB = ConfigConnection;
 
 const Avatar_config = StarRailDB.models?.avatar_config || StarRailDB.model('avatar_config', AvatarConfigSchema);
 

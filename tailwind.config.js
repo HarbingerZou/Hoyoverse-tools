@@ -9,6 +9,7 @@ module.exports = {
     // Or if using `src` directory:
     "./src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  
   //This prevents the webpack to remove unused color and background image
   safelist: [
     {
@@ -28,6 +29,7 @@ module.exports = {
     screens: {
       'sm': '375px', // iPhone XS and similar
       'md': '640px', // iPhone Plus and similar
+      'lg': '800px', 
       // Add more custom breakpoints as needed
     },
     extend: {

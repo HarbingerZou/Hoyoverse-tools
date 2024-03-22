@@ -4,7 +4,7 @@ export default function CustomCollapse({alwaysDisplay, optionalDisplay}) {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleCollapse = () => {
-    console.log("clicked");
+    //console.log("clicked");
     setIsOpen(!isOpen); // Toggle the state
   };
 

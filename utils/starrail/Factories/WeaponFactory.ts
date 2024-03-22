@@ -1,6 +1,6 @@
-import { addEffect, SpecialEffects, Multipliers, Path, Context, AllTeamEffect} from "./CommonInterfaces"
+import { addEffect, Context, AllTeamEffect} from "./CommonInterfaces"
 import { RawWeapon } from "../../../pages/api/JSONStructure";
-import { WeaponInterface } from "../SharedTypes";
+import { WeaponInterface, Path } from "../SharedTypes";
 
 class Weapon implements WeaponInterface, addEffect{
     name:string;

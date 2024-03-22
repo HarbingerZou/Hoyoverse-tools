@@ -1,5 +1,5 @@
 import { Schema, model, models } from 'mongoose';
-import conn from '../../utils/ConnectStarRailConfig';
+import {ConfigConnection} from '../../utils/ConnectDatabase';
 
 const WeightSchema = new Schema({
   //icon_path:String
@@ -17,7 +17,7 @@ const WeightSchema = new Schema({
   "Effect RES":Number
 });
 
-const StarRailDB = conn;
+const StarRailDB = ConfigConnection;
 
 const CharacterWeight = StarRailDB.models?.Character_to_stats_score || StarRailDB.model('Character_to_stats_score', WeightSchema);
 
