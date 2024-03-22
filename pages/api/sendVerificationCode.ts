@@ -36,15 +36,15 @@ export default async function(req:NextApiRequest, res:NextApiResponse){
     from: '"Admin" <admin@honkaistarrail.org>', // sender address
     to: email, // receiver(s), separated by commas for multiple recipients
     subject: 'Your Verification Code for Hoyoverse.gg', // subject
-    text: `Your verification code is: ${verificationCode}. Please use this code to complete your verification process.`, // plain text body for email clients that do not render HTML
+    text: `Your verification code is: ${verificationCode}. Please use this code to verify your email address.`, // plain text body for email clients that do not render HTML
     html: `
         <div style="font-family: Arial, sans-serif; font-size: 16px; color: #333;">
             <h2>Hello,</h2>
-            <p>Thank you for registering with Hoyoverse.gg. Please use the verification code below to complete your registration process:</p>
+            <p>Thank you for using Hoyoverse.gg. We've received a request to verify your email address. Please use the verification code below to proceed:</p>
             <div style="background-color: #f4f4f8; text-align: center; padding: 20px; margin: 20px 0; font-size: 24px; font-weight: bold; border-radius: 5px;">
                 ${verificationCode}
             </div>
-            <p>If you did not request this code, please ignore this email.</p>
+            <p>This code can be used for verifying your email address or resetting your password. If you did not make this request, please ignore this email.</p>
             <p>Best regards,<br> The Hoyoverse.gg Team</p>
         </div>
     ` // HTML body
@@ -61,7 +61,7 @@ export default async function(req:NextApiRequest, res:NextApiResponse){
     }
     // You might want to store the verification code in the session or database to validate it later
 
-    return res.status(200).json({ message: verificationCode });
+    return res.status(200).json({ verificationCode: verificationCode });
   });
 };
 

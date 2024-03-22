@@ -35,7 +35,7 @@ export default function({providers}:SignInProps){
 
     return(
 		<div className='body'>
-			<div className='flex flex-col items-center border border-secondary p-4 gap-6'>
+			<div className='flex flex-col items-center border border-secondary px-8 py-16 gap-6'>
 				<img src="/Honkai_Star_Rail.webp" alt = "Honkai:Star Rail" className='w-32'/>	
 				{Object.values(providers).map(function(provider){
 					if(provider.id !== "credentials"){
@@ -46,21 +46,21 @@ export default function({providers}:SignInProps){
 						return(
 							<>
 								<h1 className='text-lg'>Log in with Credentials</h1>
-								<form key={provider.id} onSubmit={signInClicked} className='flex flex-col items-center w-full grow gap-4'>
+								<form key={provider.id} onSubmit={signInClicked} className='flex flex-col items-start w-full grow gap-4'>
 									<input type="text" name="email" placeholder = "email" required onChange={(e) => setEmail(e.target.value)} className="input input-bordered w-full grow"/>
 									<input type="password" name="password"  placeholder = "password" required  onChange={(e) => setPassword(e.target.value)} className='input input-bordered w-full grow' />
-									<button type="submit" className='btn rounded-lg w-full'>Log In</button>
+									{message?<p>{message}</p>: <></>}
+									<button type="submit" className='btn rounded-lg w-full my-4'>Log In</button>
 								</form>
 							</>
 						)
 					}
 				})}
 				<div className='flex flex-row items-center justify-between w-full'>
-					<p>Doesn't have an account?</p>
 					<Link href={"/signUp"}>Sign Up</Link>
+					<Link href={"/reset-password"}>Forgot Password?</Link>
 				</div>
 			</div>
-			{message?<p>{message}</p>: <></>}
 		</div>
     )
 }

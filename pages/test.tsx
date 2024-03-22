@@ -13,7 +13,6 @@ export default function(){
         <div className="body">
             <SkillStats skillName="aa" skillValue="aa"/>
             <button className="btn">aaa</button>
-            <Collapse title={'undefined'} optionalText={'undefined'} />
 
             <Range size="sm" />
         </div>

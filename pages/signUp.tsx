@@ -11,7 +11,7 @@ export default function(){
     const verification_code = useRef<HTMLInputElement>(null);
     const username = useRef<HTMLInputElement>(null);
     const password = useRef<HTMLInputElement>(null);
-    const [message, setMessage] = useState<string | undefined>(undefined);;
+    const [message, setMessage] = useState<string | undefined>(undefined);
 
 
     async function verify({evt}:{evt:Event}):Promise<boolean>{
@@ -36,12 +36,12 @@ export default function(){
         });
     
     
-        const {error, message} = await response.json();
+        const {error, verificationCode} = await response.json();
         if(error){
             setMessage(error)
             return true
         }else{
-            code = message
+            code = verificationCode
             codeDestinationEmail = email.current.value
             return true
         }
@@ -114,24 +114,26 @@ async function submitPressed({evt}:any){
     const protectedVerify = useRacingCheckWrapper(verify);
     return(
         <div className="body" onSubmit={(evt) => submitPressed({evt, verification_code, username, password, setMessage})}>
-            <form className="flex flex-col items-center w-full border border-secondary p-4 gap-6">
-                    <img src="/Honkai_Star_Rail.webp" alt = "Honkai:Star Rail" className="w-32"/>
-                    <h2>Sign Up</h2>
-                    <input type="email" name="email" placeholder = "email" required ref={email} className="input input-bordered w-full grow"/>
-                    <input type="text" name="username"  placeholder = "username" required ref={username} className="input input-bordered w-full grow"/>
-                    <input type="password" name="password"  placeholder = "password at least 8 digits" required ref={password} className="input input-bordered w-full grow"/>
-                    <div className="flex flex-row w-full gap-2">
-                        <input type="text" name="code"  placeholder="verification code" required ref={verification_code} className="input input-bordered grow"/>
+            <div className="flex flex-col items-center border border-secondary px-8 py-16 gap-6">
+                <img src="/Honkai_Star_Rail.webp" alt = "Honkai:Star Rail" className="w-32"/>
+                <h2>Sign Up</h2>
+                <form className="flex flex-col items-start w-full grow gap-4">
+                        <input type="email" name="email" placeholder = "email" required ref={email} className="input input-bordered w-full grow"/>
+                        <input type="text" name="username"  placeholder = "username" required ref={username} className="input input-bordered w-full grow"/>
+                        <input type="password" name="password"  placeholder = "password at least 8 digits" required ref={password} className="input input-bordered w-full grow"/>
+                        <div className="flex flex-row w-full gap-2">
+                            <input type="text" name="code"  placeholder="verification code" required ref={verification_code} className="input input-bordered grow"/>
 
-                        <CountDownButtonWrapper countDownSecond={60}>
-                            <button onClick={(evt) => protectedVerify({evt, email,setMessage})} className="btn border border-secondary">Get Code</button>
-                        </CountDownButtonWrapper>
+                            <CountDownButtonWrapper countDownSecond={60}>
+                                <button onClick={(evt) => protectedVerify({evt, email,setMessage})} className="btn border border-secondary">Get Code</button>
+                            </CountDownButtonWrapper>
 
-                    </div>
+                        </div>
+                        {message === undefined? <></> : <p> {message} </p>}
 
-                    <button type="submit" className="btn border border-secondary w-full"> Register </button>
-            </form>
-            {message === undefined? <></> : <p> {message} </p>}
+                        <button type="submit" className="btn border border-secondary w-full mt-4"> Register </button>
+                </form>
+            </div>
         </div>
     )
 }

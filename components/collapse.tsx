@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { ReactComponentElement, ReactElement, useState } from 'react';
 
-export default function CustomCollapse({alwaysDisplay, optionalDisplay}) {
+export default function CustomCollapse({alwaysDisplay, optionalDisplay}:{alwaysDisplay:ReactElement,optionalDisplay:ReactElement }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleCollapse = () => {
@@ -10,7 +10,7 @@ export default function CustomCollapse({alwaysDisplay, optionalDisplay}) {
 
   return (
     <>
-       <div className="collapse collapse-arrow border border-base-300 bg-primary" open={isOpen}>
+       <div className={`collapse collapse-arrow border border-base-300 bg-primary ${isOpen ? 'collapse-open' : ''}`}>
         <div className="collapse-title bg-primary" onClick={toggleCollapse}>
             {alwaysDisplay}
         </div>
