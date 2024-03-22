@@ -43,11 +43,15 @@ function AccountIconArea({setIsOpen, isOpen}:{setIsOpen:Function, isOpen:boolean
   const {status, data} = useSession();
   const router = useRouter();
   const transitionDuration = 500; // Transition duration can be adjusted as needed
+  const [isEffective, setIsEffective] = useState(false)
+  const [display, setDisplay] = useState(false)
 
   useEffect(() => {
     // Function to handle closing the banner on route change
-    const handleRouteChange = () => setIsOpen(false);
+    const handleRouteChange = () => {
+      setIsOpen(false);
 
+    }
     // Adding the route change event listener
     router.events.on('routeChangeStart', handleRouteChange);
 
@@ -57,6 +61,22 @@ function AccountIconArea({setIsOpen, isOpen}:{setIsOpen:Function, isOpen:boolean
     };
   }, [router.events, setIsOpen]);
 
+
+  useEffect(()=>{
+    if(isOpen){
+      setIsEffective(isOpen)
+      setTimeout(()=>{
+        setDisplay(isOpen)
+      },50)
+    }else{
+      setDisplay(isOpen)
+      setTimeout(()=>{
+        setIsEffective(isOpen)
+      },transitionDuration)
+    }
+  },[isOpen])
+
+  
   const authenticated = status === "authenticated";
 
   let signIn = <Link href="/signIn" className="text-lg p-4 font-medium">Log In</Link>;
@@ -74,7 +94,7 @@ function AccountIconArea({setIsOpen, isOpen}:{setIsOpen:Function, isOpen:boolean
   }
 
   return (
-    <div className={`flex flex-col items-start w-1/2 bg-primary h-screen px-4 py-2 transition-transform duration-500 ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+    <div className={`flex flex-col items-start w-1/2 bg-primary h-screen px-4 py-2 transition-transform duration-500 ${display ? 'translate-x-0' : 'translate-x-full'} ${isEffective? '':"hidden"}`}>
       {authenticated && <Link href="/optimizer" className="text-lg p-4 font-medium">Scorer</Link>}
       {authenticated && <Link href="/backpack" className="text-lg p-4 font-medium">Inventory</Link>}
       {signIn}
