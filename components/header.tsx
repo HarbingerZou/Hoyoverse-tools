@@ -3,6 +3,8 @@ import { useSession } from 'next-auth/react';
 import React, { useEffect } from "react";
 import { signOut } from "next-auth/react";
 import { useState } from "react";
+import { useRouter } from 'next/router';
+
 export default function() {
   return (
       <header className="fixed w-full">
@@ -13,7 +15,7 @@ export default function() {
 
 function Header(){
   const [isOpen, setIsOpen] = useState(false);
-  //console.log(isOpen)
+  
   return(
     <div className="flex flex-col items-end">
       <div className="border-b border-secondary w-full">
@@ -30,61 +32,52 @@ function Header(){
             </button>
         </div>
       </div>
-      {isOpen?<AccountIconArea />:<></>}
+      <AccountIconArea setIsOpen={setIsOpen} isOpen = {isOpen}/>
     </div>
   )
 }
 
 
-function AccountIconArea(){
-  const {status, data} = useSession()
-  const obj = useSession()
-  //console.log(obj);
-  const [slideIn, setSlideIn] = useState(false);
+function AccountIconArea({setIsOpen, isOpen}:{setIsOpen:Function, isOpen:boolean}) {
+  // Simplified version, leveraging the `isOpen` prop for transitions
+  const {status, data} = useSession();
+  const router = useRouter();
+  const transitionDuration = 500; // Transition duration can be adjusted as needed
 
   useEffect(() => {
-    // Trigger the slide-in effect after the component is mounted
-    setSlideIn(true);
-  }, []);
+    // Function to handle closing the banner on route change
+    const handleRouteChange = () => setIsOpen(false);
 
-  
-  const loading = status === "loading"
-  const authenticated = status === "authenticated"
-  if(loading){
-    return
+    // Adding the route change event listener
+    router.events.on('routeChangeStart', handleRouteChange);
+
+    // Cleanup function to remove the event listener
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange);
+    };
+  }, [router.events, setIsOpen]);
+
+  const authenticated = status === "authenticated";
+
+  let signIn = <Link href="/signIn" className="text-lg p-4 font-medium">Log In</Link>;
+  if (authenticated && data?.user) {
+    signIn = (
+      <>
+        <p className="text-lg p-4 font-medium">
+          {data.user.name}
+        </p>
+        <p onClick={() => signOut()} className="cursor-pointer text-lg p-4 font-medium">
+          Log Out
+        </p>
+      </>
+    );
   }
-  let bakcpack = <></>
-  if(authenticated){
-    bakcpack =  <Link href="/backpack" className="text-lg p-4 font-medium">Inventory</Link>
 
-  }
-
-  let scorer = <></>
-  if(authenticated){
-    scorer =  <Link href="/optimizer" className="text-lg p-4 font-medium"> Scorer</Link>
-
-  }
-
-  let signIn =  <Link href="/signIn" className="text-lg p-4 font-medium">Log In</Link>
-  if(authenticated && data){
-    if(data.user !== undefined){
-        signIn =  
-        <>
-          <p className="text-lg p-4 font-medium">
-            {data.user.name}
-          </p>
-          <p onClick={() => signOut()} className="text-lg p-4 font-medium">
-            Log Out
-          </p>
-        </>
-    }
-
-  }
-  return(
-    <div className={`flex flex-col items-start w-1/2 bg-primary h-screen px-4 py-2 transition-transform duration-500 ${slideIn ? 'translate-x-0' : 'translate-x-full'}`}>
-      {scorer}
-      {bakcpack}
+  return (
+    <div className={`flex flex-col items-start w-1/2 bg-primary h-screen px-4 py-2 transition-transform duration-500 ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+      {authenticated && <Link href="/optimizer" className="text-lg p-4 font-medium">Scorer</Link>}
+      {authenticated && <Link href="/backpack" className="text-lg p-4 font-medium">Inventory</Link>}
       {signIn}
     </div>
-  )
+  );
 }

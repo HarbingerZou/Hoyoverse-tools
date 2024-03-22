@@ -5,7 +5,7 @@ import { signIn } from "next-auth/react"
 import useRacingCheckWrapper from "../utils/racingCheck";
 import CountDownButtonWrapper from "../components/countDownButtonWrapper";
 let code:string|undefined = undefined;
-
+let codeDestinationEmail:string|undefined = undefined;
 export default function(){
     const email = useRef<HTMLInputElement>(null);
     const verification_code = useRef<HTMLInputElement>(null);
@@ -42,6 +42,7 @@ export default function(){
             return true
         }else{
             code = message
+            codeDestinationEmail = email.current.value
             return true
         }
     }
@@ -79,6 +80,10 @@ async function submitPressed({evt}:any){
         return false
     }
 
+    if(email.current.value !== codeDestinationEmail){
+        setMessage("The email address does not match the intended recipient of the code")
+        return false
+    }
     let input = {
         username:username.current.value,
         email:email.current.value,
