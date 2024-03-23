@@ -1,5 +1,9 @@
 //This file define the common protocol between frontend and backend
 //These types should be shared between frontend and backend
+
+
+
+
 type Element = "elec" | "imaginary" | "wind"|"fire"| "ice" | "quantum" | "physical"
 type Path =  "destruction" | "hunt" | "erudition" | "harmony" | "nihility" | "perservation" | "abundance"
 type RelicType = "HEAD" | "HAND" | "BODY" |"FOOT" | "NECK" |"OBJECT"
@@ -22,9 +26,18 @@ interface subAffixInterface{
     value:number,
 }
     
-interface RelicInterface{
+interface RelicBriefInterface{
     level:number;
-    type:string;
+    type:RelicType;
+    setName:string;
+    rarity:number;
+    mainAffix:AffixInterface;
+    subAffix:subAffixInterface[];
+}
+
+interface RelicInterface extends RelicBriefInterface{
+    level:number;
+    type:RelicType;
     setID:number
     setName:string;
     rarity:number;
@@ -59,4 +72,21 @@ interface CharacterBriefInfo{
     level:number;
 }
 
-export type { Element, Path, MainStatType, SubStatType, RelicType, MultipliersInterface, RelicInterface, AffixInterface, subAffixInterface, WeaponInterface, CharacterBriefInfo};
+interface HsrInfoInterface {
+    uid: number;
+    name: string;
+    level: string;
+    relics: RelicInterface[];
+  }
+  
+  interface UserInterface {
+    username: string;
+    password: string;
+    email: string;
+    hsrInfo: HsrInfoInterface[];
+    signUpTime: Date;
+  }
+
+export type { Element, Path, MainStatType, SubStatType, RelicType,
+    MultipliersInterface, RelicInterface, AffixInterface, subAffixInterface, WeaponInterface, CharacterBriefInfo,
+    RelicBriefInterface, HsrInfoInterface, UserInterface};

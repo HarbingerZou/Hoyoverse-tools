@@ -1,11 +1,12 @@
 // pages/api/auth/[...nextauth].js
-import NextAuth from 'next-auth'
+import NextAuth, { AuthOptions } from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
 import sanitize from 'mongo-sanitize'
 import bcrypt from 'bcryptjs';
 import UserModel from '../../../models/userModel';
 
-export default NextAuth({
+
+const authOptions:AuthOptions = {
   providers: [
     Credentials({
         name: 'Credentials',
@@ -91,4 +92,7 @@ export default NextAuth({
   pages: {
     signIn: '/signIn', 
   },
-})
+} 
+export {authOptions}
+export default NextAuth(authOptions)
+

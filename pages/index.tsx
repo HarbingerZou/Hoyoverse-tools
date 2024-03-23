@@ -10,6 +10,7 @@ import RelicView from "../components/relicView"
 import style from "./scorer.module.css"
 import CustomCollapse from "../components/collapse";
 import { parseStat } from "../utils/renameMethod";
+import UIDSearchBox from "../components/UIDSearchBox";
 export default function userInfo(){
     const UIDInput = useRef<HTMLInputElement>(null);
     //const [UID,setUID] = useState(0);
@@ -60,11 +61,7 @@ export default function userInfo(){
 			</Helmet>
             <div className="body flex flex-col">
                 <h3 className="text-center text-2xl align-center font-medium">Honkai: Star Rail Relic Scorer</h3>
-                <div className="flex flex-row align-middle gap-3 key-element w-3/5 m-auto">
-                    <p className="text-center font-semibold p-3 text-lg"> UID:</p>
-                    <input ref={UIDInput}type="text" placeholder="Type here" className="input input-bordered w-full grow"/>
-                    <button onClick={searchButtonClicked} className="btn border-secondary hover:bg-secondary"> Search </button>
-                </div>
+                <UIDSearchBox UIDInput={UIDInput} searchButtonClicked={searchButtonClicked}/>
                 {infoPanel}
             </div>
         </>
