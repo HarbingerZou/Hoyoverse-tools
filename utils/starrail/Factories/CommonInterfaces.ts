@@ -99,6 +99,8 @@ class EffectsWithNotes{
     }
 }
 class SingleCharacterEffects{
+    //condition:(context) => boolean
+    //if condition === true, apply the following effect
     globalEffect:EffectsWithNotes
     followUpEffect:EffectsWithNotes
     ultimateEffect:EffectsWithNotes
@@ -113,12 +115,19 @@ class SingleCharacterEffects{
     }
 }
 
+
 class AllTeamEffect{
+    //version 2.0
+    //characterEffect:Map<CharacterBriefInfo, SingleCharacterEffects[]>
+
     //This stores the effects unique to each character
     characterEffect:Map<CharacterBriefInfo, SingleCharacterEffects>
     //The key should be a pointer to each character for verifying if the characterEffect is effective
     //This object should be unqiue fof the entire team
     //These are the effect that applied to all team members
+
+    //version 2.0
+    //teamGlobalEffect:Map<CharacterBriefInfo, SingleCharacterEffects[]>
     teamGlobalEffect:Map<CharacterBriefInfo, SingleCharacterEffects>
 
     constructor(){
@@ -190,6 +199,8 @@ class Context{
     }
 }
 
+//EnemyContext
+//Todo paid version
 
 export { SpecialEffects, Multipliers, Context, AllTeamEffect, SingleCharacterEffects, EffectsWithNotes};
 export type { addEffect};

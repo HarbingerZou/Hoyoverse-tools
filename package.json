@@ -22,6 +22,7 @@
   "homepage": "https://github.com/HarbingerZou/Honkai-Star-Rail#readme",
   "dependencies": {
     "@next-auth/prisma-adapter": "^1.0.7",
+    "@types/mongoose": "^5.11.97",
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",
     "bcryptjs": "^2.4.3",
@@ -30,7 +31,7 @@
     "express-session": "^1.17.3",
     "fs": "^0.0.1-security",
     "mongo-sanitize": "^1.1.0",
-    "mongoose": "^7.0.4",
+    "mongoose": "^7.6.10",
     "next": "^13.5.6",
     "next-auth": "^4.24.7",
     "next-session": "^4.0.5",

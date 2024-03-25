@@ -1,5 +1,6 @@
 import getWeights from "../../utils/starrail/getWeight";
-export default async function(req, res){
+import { NextApiRequest, NextApiResponse } from "next";
+export default async function(req:NextApiRequest, res:NextApiResponse){
     const input = req.body
     const {name} = input
     const weight = await getWeights(name);

@@ -125,7 +125,7 @@ function EmailBox({setLockedEmail, lockedEmail, setVerifyPassed}:{setLockedEmail
     
         const data = await response2.json();
         const {error, verificationCode} = data
-        console.log(data)
+        //console.log(data)
         if(error){
             setMessage(error)
             return true

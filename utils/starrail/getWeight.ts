@@ -1,5 +1,5 @@
 import CharacterWeight from "../../models/starRailConfig/characterToStatsScore"
-export default async function getWeights(name) {
+export default async function getWeights(name:string) {
     try {
         if (name) {
             const rawCharacterWeight = await CharacterWeight.findOne({name});

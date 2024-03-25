@@ -95,7 +95,7 @@ function AccountIconArea({setIsOpen, isOpen}:{setIsOpen:Function, isOpen:boolean
 
   return (
     <div className={`flex flex-col items-start w-1/2 bg-primary h-screen px-4 py-2 transition-transform duration-500 ${display ? 'translate-x-0' : 'translate-x-full'} ${isEffective? '':"hidden"}`}>
-      {authenticated && <Link href="/optimizer" className="text-lg p-4 font-medium">Scorer</Link>}
+      {authenticated && <Link href="/build-customizer" className="text-lg p-4 font-medium">Build Customizer</Link>}
       {authenticated && <Link href="/backpack" className="text-lg p-4 font-medium">Inventory</Link>}
       {signIn}
     </div>
