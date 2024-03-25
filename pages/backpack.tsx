@@ -66,6 +66,7 @@ function SignedInPage(){
     useEffect(()=>{
         //console.log(playerInfo)
         if(!playerInfo){
+            setSelectedInfo(null)
             return
         }
         if(!selectedInfo){
@@ -84,13 +85,16 @@ function SignedInPage(){
 
     // set the selected relic once the filter or selected UID changes
     useEffect(()=>{
-        if(selectedInfo){
-            let relics = selectedInfo.relics;
-            if(filterType){
-                relics = relics.filter(relic => relic.type === filterType)
-            }
-            setSelectedRelicList(relics)
+        if(!selectedInfo){
+            setSelectedRelicList(null)
+            return
         }
+
+        let relics = selectedInfo.relics;
+        if(filterType){
+            relics = relics.filter(relic => relic.type === filterType)
+        }
+        setSelectedRelicList(relics)
         //console.log(selectedInfo,filterType)
     },[selectedInfo,filterType])
 
