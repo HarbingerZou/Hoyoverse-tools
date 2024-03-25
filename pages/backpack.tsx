@@ -37,9 +37,6 @@ export default function Page(){
 }
 
 function SignedInPage(){
-    //if the page is loading
-    const [loading, setLoading] = useState<boolean>(true);
-
     //all the UID infos, can be undefined
     const [playerInfo, setPlayerInfo] = useState<UserInterface|null>(null);
     //selected UID, can be undefined
@@ -129,18 +126,19 @@ function SignedInPage(){
     if(selectedRelicList){
         components.push(
             <div className='flex flex-row'>
-                <div className='flex flex-col w-full'>
+                <div className='flex flex-col grow-1'>
                     <FilterArea filter={filterType} setFilter={setFilterType}/>
-                    <div className='grid grid-cols-5'>
+                    <div className='grid sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 p-2 gap-4'>
                         {selectedRelicList.map((relic,index)=>
-                            <RelicIcon relic={relic} clicked={setSelectedRelic} key={index}/>
+                            <div onClick = {()=>setSelectedRelic(relic)}>
+                                <RelicInstanceIcon relic={relic}/>
+                            </div>
                         )}
-                        <NewRelic clicked={()=>setSelectedRelic(null)}/>
                     </div>
                 </div>
                 
-                <div className='flex w-full flex-col items-center'>
-                    <RelicView relic={selectedRelic} account={selectedInfo}/>
+                <div className='flex flex-col items-center'>
+                    <RelicView relic={selectedRelic} account={selectedInfo} loadingState={fetchingState} setLoadingState={setFetchingState}/>
                 </div>
             </div>
         )
@@ -152,21 +150,9 @@ function SignedInPage(){
         </div>
     )
 
-}
 
-interface RelicIconProps {
-    relic: RelicBriefInterface;
-    clicked: React.Dispatch<React.SetStateAction<RelicBriefInterface | null>>;
-}
 
-function RelicIcon({relic,clicked}:RelicIconProps){
-    return(
-        <div onClick = {()=>clicked(relic)}>
-           <RelicInstanceIcon relic={relic}/>
-        </div>
-    )
-}
-
+/*
 function NewRelic({clicked}:{clicked:(evt: React.MouseEvent<HTMLDivElement>) => void}){
     return(
         <div onClick={clicked}>
@@ -177,7 +163,7 @@ function NewRelic({clicked}:{clicked:(evt: React.MouseEvent<HTMLDivElement>) => 
         </div>
     )
 }
-
+*/
 interface FilterAreaProps {
     filter: RelicType|null;
     setFilter: React.Dispatch<React.SetStateAction<RelicType | null>>;
@@ -188,7 +174,7 @@ function FilterArea({filter, setFilter}:FilterAreaProps){
     const ornament_types:RelicType[] = ["NECK", "OBJECT"]
     return(
         <div className='flex flex-row w-full justify-around gap-4'>
-            <div className='flex flex-row justify-around grow border-b border-secondary'>
+            <div className='flex flex-row justify-around grow-2 border-b border-secondary'>
             {  
                 relic_types.map(type=>(
                     <FilterButton value={type} state={filter} setState={setFilter} allowDeselect={true}>
@@ -217,14 +203,16 @@ function FilterArea({filter, setFilter}:FilterAreaProps){
 interface RelicViewProps {
     relic: RelicBriefInterface|null;
     account: HsrInfoInterface|null;
+    loadingState:processState,
+    setLoadingState:React.Dispatch<React.SetStateAction<processState>>;
 }
 
-function RelicView({relic,account}:RelicViewProps){
+function RelicView({relic,account,loadingState, setLoadingState}:RelicViewProps){
     if(!relic){
         return <></>
     }
     
-    return <RelicDetail relic={relic} account={account}/>
+    return <RelicDetail relic={relic} account={account} loadingState={loadingState} setLoadingState={setLoadingState}/>
 }
 
 
@@ -289,36 +277,35 @@ function RelicAdd({account}:RelicAddProps){
 
 
 interface RelicDetailProps{
-    relic:RelicBriefInterface
     account:HsrInfoInterface|null
+    relic:RelicBriefInterface,
+    loadingState:processState,
+    setLoadingState:React.Dispatch<React.SetStateAction<processState>>;
 }
 
-function RelicDetail({relic,account}:RelicDetailProps){
-    const [loading,setLoading] = useState(false)
-    async function deleteButtonClicked(relic:RelicBriefInterface,account:HsrInfoInterface|null){
-        if(loading){
-            //console.log("Fast return")
+
+function RelicDetail({relic,account,loadingState, setLoadingState}:RelicDetailProps){
+    async function deleteClicked(relic:RelicBriefInterface, account:HsrInfoInterface|null) {
+        if(loadingState === "loading"){
             return
         }
-        setLoading(true)
-
-        //console.log(account)
-        const response = await fetch(`/api/deleteBackPackRelic`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({relic,account}),
-        });
+        setLoadingState("loading")
+        if(account===null){
+            console.log("Error:no account")
+            return
+        }
+        await deleteRelic(relic, account)
         await refreshPage();
-
-        setLoading(false);
+        setLoadingState("finished")
     }
-
     return(
-        <div>
+        <div className='flex flex-col border border-secondary py-4 px-2'>
             <RelicViewBox relic={relic}/>
-            <button onClick={() => deleteButtonClicked(relic,account)}>Delete</button>
+            <button 
+                onClick={() => deleteClicked(relic,account)}
+                className='btn w-full'>
+                Delete
+            </button>
         </div>
     )
 }
@@ -333,4 +320,15 @@ async function updateBackPack(data:UserInfo){
         },
         body: JSON.stringify({userInfo:data}),
     });
+}}
+
+async function deleteRelic(relic:RelicBriefInterface,account:HsrInfoInterface){
+    const response = await fetch(`/api/userInfo`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({relic,hsrInfo:account}),
+    });
+    console.log(response)
 }

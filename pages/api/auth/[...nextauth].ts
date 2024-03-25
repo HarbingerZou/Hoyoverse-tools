@@ -14,7 +14,7 @@ const authOptions:AuthOptions = {
           email: { label: "email", type: "text" },
           password: {  label: "Password", type: "password" },
         },
-        async authorize(credentials: Record<"email" | "password", string> | undefined, req) {
+        async authorize(credentials: Record<"email" | "password", string> | undefined, req:any) {
           if (!credentials) {
             // Reject the promise with a custom error message
             return Promise.reject(new Error("Credentials not provided"));

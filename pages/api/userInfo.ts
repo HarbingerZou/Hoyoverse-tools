@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { getServerSession } from 'next-auth'; 
 import User from '../../models/userModel'; 
 import { authOptions } from './auth/[...nextauth]';
-import { HsrInfoInterface, RelicBriefInterface, UserInterface } from '../../utils/starrail/SharedTypes';
+import { HsrInfoInterface, RelicBriefInterface, RelicMongoInterface, UserInterface } from '../../utils/starrail/SharedTypes';
 import { FormattedRelic, UserInfo } from './JSONStructureOwn';
 
 export default async function(req: NextApiRequest, res: NextApiResponse) {
@@ -26,7 +26,9 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
 
     } else if (req.method === 'POST') {
         await methodPost(req, res, session_user_email)
-    } else {
+    } else if (req.method === "DELETE"){
+        await methodDelete(req, res, session_user_email)
+    }else{
         return res.status(405).json({ message: "Method Not Allowed" });
     }
 }
@@ -72,7 +74,7 @@ async function methodPost(req:NextApiRequest, res:NextApiResponse, session_user_
                 return res.status(404).json({ message: "User Saving error" });      
             }
 
-            return res.status(200).json({ message: "User updated successfully", user: updatedUser });
+            return res.status(200).json({ message: "User updated successfully" });
         } catch (error) {
             console.error("Update error:", error);
             return res.status(500).json({ message: "Internal Server Error on update" });
@@ -129,6 +131,54 @@ async function updateWithUserInfo(updatedUser:UserInterface, userInfo:UserInfo) 
 }
 
 
-async function updateWithRelic(session_user_email:string, updatedUser:UserInterface, relic:RelicBriefInterface) {
+async function updateWithRelic(session_user_email:string, updatedUser:UserInterface, relic:RelicMongoInterface) {
     
+}
+
+
+async function methodDelete(req:NextApiRequest, res:NextApiResponse, session_user_email:String){
+    try {
+        const db_user = await User.findOne({ email: session_user_email });
+        //console.log(db_user)
+
+        if (!db_user) {
+            return res.status(404).json({ message: "Invalid User" });
+        }
+        
+        const {hsrInfo, relic}:{hsrInfo:HsrInfoInterface, relic:RelicBriefInterface} = req.body
+
+        if(relic){
+            //console.log("update with userinfo")
+            await deleteRelic(db_user, hsrInfo, relic)
+        }
+
+        try{
+            await db_user.save();
+        }catch(err){
+            return res.status(404).json({ message: "User Saving error" });      
+        }
+
+        return res.status(200).json({ message: "Success" });
+    } catch (error) {
+        console.error("Database error:", error);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+}
+
+
+async function deleteRelic(db_user:UserInterface, hsrInfo:HsrInfoInterface, relic:RelicMongoInterface) {
+    const db_user_hsr_info = db_user.hsrInfo.find(info=>info.uid === hsrInfo.uid)
+    if(db_user_hsr_info === undefined){
+        console.log("No HSR Info Found")
+        return
+    }
+    const index = db_user_hsr_info.relics.findIndex(relicInstance => JSON.parse(JSON.stringify(relicInstance._id)) === relic._id)
+    //console.log(relic)
+
+    if(index>=0){
+        db_user_hsr_info.relics.splice(index,1);
+    }else{
+        //console.log("No Relic Found")
+        return
+    }
 }

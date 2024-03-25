@@ -16,7 +16,7 @@ export default function({selectedInfo, setSelectedInfo, infos}:AccountTabProps){
                     value={accountInfo}
                     setState={() => setSelectedInfo(accountInfo)}
                     >
-                    <button className="px-2 rounded-lg">UID: {accountInfo.uid}</button>
+                    <button className="px-2 rounded-lg text-xl">UID: {accountInfo.uid}</button>
                 </FilterButton>
             ))}
         </div>

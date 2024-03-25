@@ -39,6 +39,9 @@ module.exports = {
         'star-3': 'linear-gradient(to right, rgb(62, 78, 96), rgb(114, 117, 202))',
         'star-2': 'linear-gradient(to right, rgb(62, 95, 96), rgb(114, 181, 202))',
       },
+      flexGrow: {
+        '2': '2', 
+      },
       colors: {
         // Define your custom colors
         primary: '#0c0e1b', // Example primary color (purple)
