@@ -3,7 +3,7 @@ import { RawCharacter } from './JSONStructure';
 import { RawWeapon } from './JSONStructure';
 import { Factors } from './JSONStructure';
 import { CharacterInfo } from '../../utils/starrail/Factories/getDamageInfo';
-import { AffixInterface, subAffixInterface, RelicInterface, Element, RelicType } from '../../utils/starrail/SharedTypes';
+import { AffixInterface, subAffixInterface, RelicInterface, Element, RelicType, HsrInfoInterface } from '../../utils/starrail/SharedTypes';
 
 
 class FormattedRelic implements RelicInterface{
@@ -92,6 +92,7 @@ class CharacterWithStats implements RawCharacter{
     }
 }
 
+//Can Implement the HSRInterface if necessaery
 class UserInfo{
     uid:number
     name:string

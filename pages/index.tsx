@@ -9,43 +9,22 @@ import React from "react";
 import RelicView from "../components/relicView"
 import style from "./scorer.module.css"
 import CustomCollapse from "../components/collapse";
-import { parseStat } from "../utils/renameMethod";
-import UIDSearchBox from "../components/UIDSearchBox";
+import HSRInfoFetchBox from "../components/HSRInfoFetchBox";
+import { processState } from "../utils/starrail/stateRelatedShareTyps";
+
 export default function userInfo(){
     const UIDInput = useRef<HTMLInputElement>(null);
     //const [UID,setUID] = useState(0);
     const [userInfo, setUserInfo] = useState<UserInfo|undefined>(undefined);
-    const [loading,setLoading] = useState(false);
+    const [loading,setLoading] = useState<processState>("initial");
     //const {status, data} = useSession();
-    async function searchButtonClicked(evt:React.MouseEvent){
-        if(loading){
-            return;
-        }
-        const UIDString = UIDInput.current?.value;
-        const UID = Number(UIDString)
-        if (!UIDString || UIDString === "" || isNaN(UID)){
-            setUserInfo(undefined)
-            return;
-        }
-        
-        setLoading(true);
-        //console.log(UID);
-        fetch(`/api/scorer?uid=${UID}`)
-        .then(response => response.json())
-        .then((data) => {              
-            setUserInfo(data);
-            setLoading(false);
-        });
-    }
-
-    //console.log("userINfo:",userInfo);
     let infoPanel = 
         <>
             <p className="justify-center text-center">Display the characters you want to score as Starfaring Companions in the game and enter your UID</p>
             <p className="justify-center text-center">If you just changed your characters' suits in the game, it may take roughly 3 minutes for the result to change </p>
         </>
 
-    if(loading){
+    if(loading=="loading"){
         infoPanel = <LoadingPage />
     }else if(userInfo !== undefined && Object.keys(userInfo).length === 0){
         infoPanel = <p className="text-center">UID {UIDInput.current?.value} is not a valid UID</p>
@@ -61,7 +40,7 @@ export default function userInfo(){
 			</Helmet>
             <div className="body flex flex-col">
                 <h3 className="text-center text-2xl align-center font-medium">Honkai: Star Rail Relic Scorer</h3>
-                <UIDSearchBox UIDInput={UIDInput} searchButtonClicked={searchButtonClicked}/>
+                <HSRInfoFetchBox loadingState={loading} setLoadingState={setLoading} toDos={[(data:UserInfo) => setUserInfo(data)]}/>
                 {infoPanel}
             </div>
         </>

@@ -2,7 +2,8 @@ import { Schema, model, models } from 'mongoose';
 import { MainConnection } from '../utils/ConnectDatabase';
 const subAffixSchema = new Schema({
     type:String,
-    value:Number
+    value:Number,
+    count:Number
 })
 
 const mainAffixSchema = new Schema({
@@ -13,8 +14,8 @@ const mainAffixSchema = new Schema({
 const relicSchema = new Schema({
     level:Number,
     type:String,
-    set:String,
-    rarity:String,
+    setName:String,
+    rarity:Number,
     mainAffix:mainAffixSchema,
     subAffix:[subAffixSchema]
 })

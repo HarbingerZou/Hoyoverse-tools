@@ -1,17 +1,19 @@
 import { useRef } from "react";
-import { UserInterface } from "../utils/starrail/SharedTypes";
-import UIDSearchBox from "./UIDSearchBox";
+import UIDSearchBox from "./UIDSearchBoxUI";
+import { UserInfo } from "../pages/api/JSONStructureOwn";
+import { processState } from "../utils/starrail/stateRelatedShareTyps";
+//get the HSR info with a corresponding UID
 interface SearchBoxProps {
-    state: "loading" | "finished" | "initial"; 
-    setState: React.Dispatch<React.SetStateAction<"loading" | "finished" | "initial">>;
-    setResult: React.Dispatch<React.SetStateAction<UserInterface|null>>;
-    toDos?: ((data: UserInterface) => Promise<void>)[]; 
-  }
+  loadingState: processState; 
+  setLoadingState: React.Dispatch<React.SetStateAction<processState>>;
+  //can accept async or sync functions
+  toDos?: ((data: UserInfo) => Promise<void>|void)[]; 
+}
 
-export default function({state, setState, setResult, toDos}:SearchBoxProps){
+export default function({loadingState, setLoadingState, toDos}:SearchBoxProps){
     const UIDInput = useRef<HTMLInputElement>(null);
     async function searchButtonClicked(evt: React.MouseEvent<HTMLButtonElement>){
-        if(state==="loading"){
+        if(loadingState==="loading"){
             return;
         }
         if (!UIDInput.current || UIDInput.current.value === "") {
@@ -20,13 +22,11 @@ export default function({state, setState, setResult, toDos}:SearchBoxProps){
         const UID = UIDInput.current.value;
         
         try {
-            //get the new whole user data
+          setLoadingState("loading")
+
             const response = await fetch(`/api/scorer?uid=${UID}`);
             const data = await response.json();
       
-            
-            setResult(data);
-            
       
             if (toDos) {
               for (const toDo of toDos) {
@@ -34,11 +34,11 @@ export default function({state, setState, setResult, toDos}:SearchBoxProps){
               }
             }
       
-            setState("finished");
+            setLoadingState("finished");
           } catch (error) {
             console.error("Failed to fetch user info:", error);
 
-            setState("finished");
+            setLoadingState("finished");
           }
     }
     return(

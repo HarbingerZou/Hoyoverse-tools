@@ -37,7 +37,7 @@ function parseSubAffix(affix:RawSubAffix, affix_config:any):subAffixInterface{
     //console.log(count)
     let value:number = affix.info.value;
     //let valueString:string = parseValue(value, type);
-    return {type,count,value}
+    return {type,value,count}
 }
 
 
@@ -105,12 +105,14 @@ async function formatUserInfo(data:any):Promise<UserInfo | undefined>{
                 continue;
             }
             const formatted_relic:FormattedRelic = parseRelic(relic, cachedRelicConfig, cachedAffixConfig, cachedSetConfig);
+            /*
             const {score,rate} = await getRelicScore({relic:formatted_relic, name:formattedAvatar.name});
             formatted_relic.score = score;
             formatted_relic.rate = rate;
+            */
             //console.log("Instance check: ", formatted_relic instanceof FormattedRelic)
             formattedAvatar.relics.push(formatted_relic);
-            formattedAvatar.totalScore += score
+            //formattedAvatar.totalScore += score
         }
 
 

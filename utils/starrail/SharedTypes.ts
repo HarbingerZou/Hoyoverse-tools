@@ -1,6 +1,8 @@
 //This file define the common protocol between frontend and backend
 //These types should be shared between frontend and backend
 
+import { ObjectId } from "mongoose"
+
 
 
 
@@ -25,7 +27,20 @@ interface subAffixInterface{
     count:number
     value:number,
 }
-    
+
+interface AffixMongoInterface extends AffixInterface{
+    type:MainStatType,
+    value:number,
+    _id?:ObjectId
+}
+
+interface subAffixMongoInterface extends subAffixInterface{
+    type:SubStatType,
+    count:number
+    value:number,
+    _id?:ObjectId
+}
+
 interface RelicBriefInterface{
     level:number;
     type:RelicType;
@@ -43,6 +58,16 @@ interface RelicInterface extends RelicBriefInterface{
     rarity:number;
     mainAffix:AffixInterface;
     subAffix:subAffixInterface[];
+}
+
+interface RelicMongoInterface extends RelicBriefInterface{
+    level:number;
+    type:RelicType;
+    setName:string;
+    rarity:number;
+    mainAffix:AffixMongoInterface;
+    subAffix:subAffixMongoInterface[];
+    _id?:ObjectId
 }
 
 interface WeaponInterface {
@@ -72,21 +97,26 @@ interface CharacterBriefInfo{
     level:number;
 }
 
+//corresond to thw HSRInfo field in the user document in database
 interface HsrInfoInterface {
     uid: number;
     name: string;
-    level: string;
-    relics: RelicInterface[];
-  }
-  
-  interface UserInterface {
+    level: number;
+    relics: RelicMongoInterface[];
+    _id?:ObjectId
+}
+
+interface UserInterface {
     username: string;
     password: string;
     email: string;
     hsrInfo: HsrInfoInterface[];
     signUpTime: Date;
-  }
+    _id:ObjectId
+    __v:number
+}
 
 export type { Element, Path, MainStatType, SubStatType, RelicType,
     MultipliersInterface, RelicInterface, AffixInterface, subAffixInterface, WeaponInterface, CharacterBriefInfo,
-    RelicBriefInterface, HsrInfoInterface, UserInterface};
+    RelicBriefInterface, 
+    RelicMongoInterface, HsrInfoInterface, UserInterface,};

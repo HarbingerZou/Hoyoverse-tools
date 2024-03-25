@@ -1,6 +1,8 @@
+import { promises } from "fs";
+
 interface UIDInputProps {
     UIDInput: React.RefObject<HTMLInputElement>;
-    searchButtonClicked: () => void;
+    searchButtonClicked: (event: React.MouseEvent<HTMLButtonElement>) => void|Promise<void>;
 }
 export default function({UIDInput, searchButtonClicked}:UIDInputProps){
 
