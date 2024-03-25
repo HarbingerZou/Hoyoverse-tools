@@ -21,13 +21,7 @@ export default async function connectToStarRail() {
 }
 */
 
-const ConfigConnection =  mongoose.createConnection(process.env.Config_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-});
+const ConfigConnection =  mongoose.createConnection(process.env.Config_URI!) 
 
-const MainConnection =  mongoose.createConnection(process.env.Main_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-});
+const MainConnection =  mongoose.createConnection(process.env.Main_URI!);
 export {ConfigConnection, MainConnection}

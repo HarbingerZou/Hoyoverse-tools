@@ -25,7 +25,7 @@ function getRate(score:number){
     return "D";
 }
 
-export default async function getSocre({relic,name}:{relic:FormattedRelic, name:String}){
+export default async function getSocre({relic,name}:{relic:FormattedRelic, name:string}){
 
     const weights = await getWeights(name);
 
