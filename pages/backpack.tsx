@@ -64,7 +64,7 @@ function SignedInPage(){
 
     //when player info changes, refresh the selected info
     useEffect(()=>{
-        console.log(playerInfo)
+        //console.log(playerInfo)
         if(!playerInfo){
             return
         }
@@ -115,12 +115,15 @@ function SignedInPage(){
     }
     const components:ReactElement[] = []
     components.push(
-        <Searchbox loadingState={fetchingState} setLoadingState={setFetchingState} toDos={[updateBackPack, refreshPage]}/>
+        <Searchbox loadingState={fetchingState} setLoadingState={setFetchingState} toDos={[updateBackPack, refreshPage]} plainData={true}/>
     )
     
     if(playerInfo && playerInfo.hsrInfo){
         components.push(
-            <UIDBars selectedInfo={selectedInfo} setSelectedInfo={setSelectedInfo} infos={playerInfo.hsrInfo}/>
+            <UIDBars selectedInfo={selectedInfo}
+                setSelectedInfo={setSelectedInfo}
+                infos={playerInfo.hsrInfo}
+                deleteProps={{loadingState:fetchingState, setLoadingState:setFetchingState, update:refreshPage}}/>
         )
     }
     if(selectedRelicList){
@@ -298,6 +301,7 @@ function RelicDetail({relic,account,loadingState, setLoadingState}:RelicDetailPr
         await refreshPage();
         setLoadingState("finished")
     }
+
     return(
         <div className='flex flex-col border border-secondary py-4 px-2'>
             <RelicViewBox relic={relic}/>

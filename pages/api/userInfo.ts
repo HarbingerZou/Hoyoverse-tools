@@ -95,7 +95,7 @@ async function updateWithUserInfo(updatedUser:UserInterface, userInfo:UserInfo) 
     for(const avatar of userInfo.avatars){
         for(const relic of avatar.relics){
             const {setID, ...relicBrief} = relic
-            console.log(relicBrief) 
+            //console.log(relicBrief) 
             relicSets.add(JSON.stringify(relicBrief))
         }
     }
@@ -150,6 +150,8 @@ async function methodDelete(req:NextApiRequest, res:NextApiResponse, session_use
         if(relic){
             //console.log("update with userinfo")
             await deleteRelic(db_user, hsrInfo, relic)
+        }else{
+            await deleteHSRInfo(db_user, hsrInfo)
         }
 
         try{
@@ -164,6 +166,8 @@ async function methodDelete(req:NextApiRequest, res:NextApiResponse, session_use
         return res.status(500).json({ message: "Internal Server Error" });
     }
 }
+
+
 
 
 async function deleteRelic(db_user:UserInterface, hsrInfo:HsrInfoInterface, relic:RelicMongoInterface) {
@@ -181,4 +185,15 @@ async function deleteRelic(db_user:UserInterface, hsrInfo:HsrInfoInterface, reli
         //console.log("No Relic Found")
         return
     }
+}
+
+async function deleteHSRInfo(db_user:UserInterface, hsrInfo:HsrInfoInterface) {
+    const index = db_user.hsrInfo.findIndex(info=>info.uid === hsrInfo.uid)
+    if(index === -1){
+        console.log("No HSR Info Found")
+        return
+    }
+
+    db_user.hsrInfo.splice(index,1);
+    return
 }

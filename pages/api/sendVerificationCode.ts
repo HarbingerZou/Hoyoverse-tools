@@ -1,18 +1,18 @@
 import nodemailer from 'nodemailer';
 import { NextApiRequest, NextApiResponse } from 'next';
 export default async function(req:NextApiRequest, res:NextApiResponse){
-  console.log(req.method);
+  //console.log(req.method);
   if (req.method !== 'POST') {
     return res.status(405).end();
   }
 
   const email  = req.body;
 
-  console.log(email)
+  //console.log(email)
 
   const verificationCode = generateVerificationCode();
 
-  console.log(verificationCode)
+  //console.log(verificationCode)
 
 
   let transporter = nodemailer.createTransport({

@@ -40,7 +40,7 @@ export default function userInfo(){
 			</Helmet>
             <div className="body flex flex-col">
                 <h3 className="text-center text-2xl align-center font-medium">Honkai: Star Rail Relic Scorer</h3>
-                <HSRInfoFetchBox loadingState={loading} setLoadingState={setLoading} toDos={[(data:UserInfo) => setUserInfo(data)]}/>
+                <HSRInfoFetchBox loadingState={loading} setLoadingState={setLoading} plainData={false} toDos={[(data:UserInfo) => setUserInfo(data)]}/>
                 {infoPanel}
             </div>
         </>

@@ -7,10 +7,11 @@ interface SearchBoxProps {
   loadingState: processState; 
   setLoadingState: React.Dispatch<React.SetStateAction<processState>>;
   //can accept async or sync functions
+  plainData:boolean
   toDos?: ((data: UserInfo) => Promise<void>|void)[]; 
 }
 
-export default function({loadingState, setLoadingState, toDos}:SearchBoxProps){
+export default function({loadingState, setLoadingState, toDos,plainData}:SearchBoxProps){
     const UIDInput = useRef<HTMLInputElement>(null);
     async function searchButtonClicked(evt: React.MouseEvent<HTMLButtonElement>){
         if(loadingState==="loading"){
@@ -24,7 +25,7 @@ export default function({loadingState, setLoadingState, toDos}:SearchBoxProps){
         try {
           setLoadingState("loading")
 
-            const response = await fetch(`/api/scorer?uid=${UID}`);
+            const response = plainData? await fetch(`/api/HSRInfo?uid=${UID}`): await fetch(`/api/scorer?uid=${UID}`);
             const data = await response.json();
       
       

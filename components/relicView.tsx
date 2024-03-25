@@ -1,7 +1,7 @@
 import { FormattedRelic } from "../pages/api/JSONStructureOwn"
-import { Relic } from "../utils/starrail/Factories/RelicFactory"
+import { RelicBriefInterface } from "../utils/starrail/SharedTypes"
 import { parseStat, parseType, parseValue } from "../utils/renameMethod"
-export default function({relic}:{relic:Relic}){
+export default function({relic}:{relic:RelicBriefInterface}){
     //console.log(relic instanceof FormattedRelic);
     return(
         <div className="flex flex-col w-80 m-4">

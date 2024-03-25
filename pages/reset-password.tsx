@@ -14,7 +14,7 @@ export default function(){
     }else{
         content = <EmailBox setLockedEmail={setLockedEmail} lockedEmail={lockedEmail} setVerifyPassed={setVerifyPassed}/>
     }
-    console.log(lockedEmail)
+    //console.log(lockedEmail)
     return(
         <div className="body">
             <div className='flex flex-col items-center border border-secondary px-8 py-16 gap-6'>
