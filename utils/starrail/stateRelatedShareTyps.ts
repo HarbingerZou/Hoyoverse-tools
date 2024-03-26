@@ -1,3 +1,3 @@
-type processState = "loading" | "finished" | "initial"
+type processState = "loading" | "finished" | "initial"|"failed"
 
 export type {processState}

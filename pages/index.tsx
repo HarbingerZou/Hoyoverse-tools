@@ -13,10 +13,12 @@ import HSRInfoFetchBox from "../components/HSRInfoFetchBox";
 import { processState } from "../utils/starrail/stateRelatedShareTyps";
 
 export default function userInfo(){
-    const UIDInput = useRef<HTMLInputElement>(null);
-    //const [UID,setUID] = useState(0);
+    const [UID, setUID] = useState<number|undefined>(undefined);
     const [userInfo, setUserInfo] = useState<UserInfo|undefined>(undefined);
     const [loading,setLoading] = useState<processState>("initial");
+    
+    //console.log(UID)
+
     //const {status, data} = useSession();
     let infoPanel = 
         <>
@@ -24,10 +26,14 @@ export default function userInfo(){
             <p className="justify-center text-center">If you just changed your characters' suits in the game, it may take roughly 3 minutes for the result to change </p>
         </>
 
-    if(loading=="loading"){
+    if(loading==="loading"){
         infoPanel = <LoadingPage />
-    }else if(userInfo !== undefined && Object.keys(userInfo).length === 0){
-        infoPanel = <p className="text-center">UID {UIDInput.current?.value} is not a valid UID</p>
+    }else if(loading=="failed"){
+        infoPanel = 
+        <div className="flex flex-col items-center">
+            <p>User Info fetching failed</p>
+            <p className="text-center">UID {UID} is not a valid UID</p>
+        </div>
     }else if(userInfo !== undefined){
         infoPanel = <User userInfo = {userInfo}/>
     }
@@ -40,7 +46,7 @@ export default function userInfo(){
 			</Helmet>
             <div className="body flex flex-col">
                 <h3 className="text-center text-2xl align-center font-medium">Honkai: Star Rail Relic Scorer</h3>
-                <HSRInfoFetchBox loadingState={loading} setLoadingState={setLoading} plainData={false} toDos={[(data:UserInfo) => setUserInfo(data)]}/>
+                <HSRInfoFetchBox setUID={setUID} loadingState={loading} setLoadingState={setLoading} plainData={false} toDos={[(data:UserInfo) => setUserInfo(data)]}/>
                 {infoPanel}
             </div>
         </>
@@ -101,7 +107,7 @@ function SingleCharacter({character}:{character:CharacterWithStats}){
                 <StatsBox character={character} />
 
             </div>
-            <div className="grid grid-flow-row auto-rows-max sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">  
+            <div className="grid grid-flow-row auto-rows-max sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 place-items-center">  
                 {character.relics.map((relic,index) => {
                     relic = FormattedRelic.fromObject(relic)
                     return <RelicView relic={relic}/>

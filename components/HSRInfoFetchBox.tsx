@@ -8,10 +8,11 @@ interface SearchBoxProps {
   setLoadingState: React.Dispatch<React.SetStateAction<processState>>;
   //can accept async or sync functions
   plainData:boolean
+  setUID?:React.Dispatch<React.SetStateAction<number|undefined>>;
   toDos?: ((data: UserInfo) => Promise<void>|void)[]; 
 }
 
-export default function({loadingState, setLoadingState, toDos,plainData}:SearchBoxProps){
+export default function({loadingState, setLoadingState, toDos,plainData, setUID}:SearchBoxProps){
     const UIDInput = useRef<HTMLInputElement>(null);
     async function searchButtonClicked(evt: React.MouseEvent<HTMLButtonElement>){
         if(loadingState==="loading"){
@@ -20,18 +21,31 @@ export default function({loadingState, setLoadingState, toDos,plainData}:SearchB
         if (!UIDInput.current || UIDInput.current.value === "") {
             return;
         }
-        const UID = UIDInput.current.value;
-        
+        const UID:number = Number(UIDInput.current.value);
+
+        //console.log("UID", UID)
+        if(isNaN(UID)){
+          return
+        }
+
+        if(setUID){
+          setUID(UID)
+        }
+
         try {
           setLoadingState("loading")
 
             const response = plainData? await fetch(`/api/HSRInfo?uid=${UID}`): await fetch(`/api/scorer?uid=${UID}`);
             const data = await response.json();
-      
-      
+            const {userInfo, Error} = data
+            if(Error){
+              setLoadingState("failed");
+              return
+            }
+            
             if (toDos) {
               for (const toDo of toDos) {
-                await toDo(data);
+                await toDo(userInfo);
               }
             }
       

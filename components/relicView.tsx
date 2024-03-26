@@ -4,7 +4,7 @@ import { parseStat, parseType, parseValue } from "../utils/renameMethod"
 export default function({relic}:{relic:RelicBriefInterface}){
     //console.log(relic instanceof FormattedRelic);
     return(
-        <div className="flex flex-col w-80 m-4">
+        <div className="flex flex-col m-4 w-72">
             <p className={`border-b-2 text-star-${relic.rarity} border-star-${relic.rarity}`}>{relic.setName}</p>
             <div className={`flex flex-row items-end justify-between bg-star-${relic.rarity} my-2 py-1 px-4`}>
                 <div className='flex flex-col'>

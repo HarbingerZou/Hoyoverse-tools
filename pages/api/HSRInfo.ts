@@ -6,6 +6,6 @@ export default async function handler(req:any, res:any) {
     if(userInfo == null){
         return res.status(500).json({Error:"Temporary error fetching user infos"})
     }else{
-        return res.status(200).json(userInfo)
+        return res.status(200).json({userInfo:userInfo})
     }
 }

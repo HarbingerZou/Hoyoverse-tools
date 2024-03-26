@@ -135,7 +135,7 @@ function SignedInPage(){
             <div className='flex flex-row'>
                 <div className='flex flex-col grow-1'>
                     <FilterArea filter={filterType} setFilter={setFilterType}/>
-                    <div className='grid sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 p-2 gap-4'>
+                    <div className='grid sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-7 p-2 gap-4'>
                         {selectedRelicList.map((relic,index)=>
                             <div onClick = {()=>setSelectedRelic(relic)}>
                                 <RelicInstanceIcon relic={relic}/>
@@ -185,8 +185,8 @@ function FilterArea({filter, setFilter}:FilterAreaProps){
             {  
                 relic_types.map(type=>(
                     <FilterButton value={type} state={filter} setState={setFilter} allowDeselect={true}>
-                        <div >
-                            <img src={`/starrail/Relic Types/${parseType(type)}.webp`} alt={type} />
+                        <div className='w-full flex flex-row justify-center p-1'>
+                            <img src={`/starrail/Relic Types/${parseType(type)}.webp`} alt={type}/>
                         </div>
                     </FilterButton>
                 ))
@@ -196,7 +196,7 @@ function FilterArea({filter, setFilter}:FilterAreaProps){
             {  
                 ornament_types.map(type=>(
                     <FilterButton value={type}state={filter} setState={setFilter} allowDeselect={true}>
-                        <div>
+                        <div className='w-full flex flex-row justify-center p-1'>
                             <img src={`/starrail/Relic Types/${parseType(type)}.webp`} alt={type} />
                         </div>
                     </FilterButton>

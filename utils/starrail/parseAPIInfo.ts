@@ -133,6 +133,7 @@ export default async function parser(UID:number):Promise<UserInfo | null> {
     }
     
     const userInfo:UserInfo|undefined = await inspect(() => formatUserInfo(data))
+
     if(userInfo == undefined){
         return null
     }else{
